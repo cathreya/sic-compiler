@@ -99,8 +99,8 @@ true|false {
 }
 [0-9]+ { 
 	//yylval.ival = atoi(yytext); 
-	cout<<"found a INTEG;"<<endl;
-	// return INTEG;
+	cout<<"found a INTV;"<<endl;
+	// return INTV;
 }
 [0-9]*[.][0-9]+ {
 	//yylval.ival = atof(yytext); 
