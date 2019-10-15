@@ -107,7 +107,7 @@ true|false {
 	cout<<"found a FLOATV;"<<endl;
 	// return FLOATV;
 }
-"\'"[^"\'"]"\'" {
+("\'"[^"\'"]"\'")|("\'\\"[^"\'"]"\'") {
 	//yylval.sval[0] = yytext[0];
 	//yylval.sval[1] = 0;
 	cout<<"found a CHARV;"<<endl;
