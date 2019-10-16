@@ -12,7 +12,7 @@ extern int yylex();
 
 %% 
 [ \t] { /* eat white spaces */  }
-"//"[a-zA-Z]+ {
+"/""/"[^"\n"]*"\n" {
 	//consume the comment
 }
 [,] {
