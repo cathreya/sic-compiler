@@ -78,11 +78,7 @@ program : prog_element program {status(5);};
 
 declaration : TYPE NAME ASSIGN STRINGLIT {status(7);};
 | TYPE NAME  {status(77);};
-| TYPE NAME ASSIGN FLOATV  {status(8);};
-| TYPE NAME ASSIGN INTV  {status(9);};
-| TYPE NAME ASSIGN BOOLLIT  {status(10);};
-| TYPE NAME ASSIGN CHARV  {status(11);};
-| TYPE NAME ASSIGN NAME  {status(12);};
+| TYPE NAME ASSIGN texp  {status(12);};
 
 function_definition : TYPE NAME OPENPAREN parameters CLOSEPAREN statement_block {status(13);};
 | TYPE NAME OPENPAREN CLOSEPAREN statement_block {status(14);};
@@ -94,22 +90,28 @@ parameters : TYPE NAME {status(17);};
 
 statement_block : OPENBRACE statement_list CLOSEBRACE {status(19);};
 
-statement_list : statement STMT_SEP {status(20);};
-| statement_list statement STMT_SEP {status(21);};
+statement_list : statementsc STMT_SEP {status(20);};
+| statementcurly {status(21);};
+| statement_list statementsc STMT_SEP {status(21);};
+| statement_list statementcurly {status(21);};
 
-statement : declaration {status(22);};
+statementsc : declaration {status(22);};
 | assignment_statement {status(23);};
 | function_call {status(24);};
 | BREAK {status(25);};
 | CONTINUE {status(26);};
 | RETURN {status(27);};
 | RETURN texp {status(277);};
-| if_block {status(28);};
+
+statementcurly : if_block {status(28);};
 | while_block {status(29);};
 | for_block {status(30);};
 
 assignment_statement : NAME ASSIGN texp {status(31);};
-| NAME OPENSQUARE term CLOSESQUARE ASSIGN texp {status(32);};
+| NAME multidim ASSIGN texp {status(32);};
+
+multidim : OPENSQUARE texp CLOSESQUARE {status(322);};
+| multidim OPENSQUARE texp CLOSESQUARE {status(323);};
 
 function_call : NAME OPENPAREN arguments CLOSEPAREN {status(33);};
 | NAME OPENPAREN CLOSEPAREN {status(34);};
@@ -125,13 +127,13 @@ if_block : IF OPENPAREN texp CLOSEPAREN statement_block {status(37);};
 while_block : WHILE OPENPAREN texp CLOSEPAREN statement_block {status(39);};
 
 for_block : FOR OPENPAREN STMT_SEP STMT_SEP CLOSEPAREN statement_block {status(40);};
-| FOR OPENPAREN STMT_SEP STMT_SEP statement CLOSEPAREN statement_block {status(41);};
+| FOR OPENPAREN STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {status(41);};
 | FOR OPENPAREN STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {status(42);};
-| FOR OPENPAREN STMT_SEP texp STMT_SEP statement CLOSEPAREN statement_block {status(43);};
-| FOR OPENPAREN statement STMT_SEP STMT_SEP CLOSEPAREN statement_block {status(44);};
-| FOR OPENPAREN statement STMT_SEP STMT_SEP statement CLOSEPAREN statement_block {status(45);};
-| FOR OPENPAREN statement STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {status(46);};
-| FOR OPENPAREN statement STMT_SEP texp STMT_SEP statement CLOSEPAREN statement_block {status(47);};
+| FOR OPENPAREN STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {status(43);};
+| FOR OPENPAREN statementsc STMT_SEP STMT_SEP CLOSEPAREN statement_block {status(44);};
+| FOR OPENPAREN statementsc STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {status(45);};
+| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {status(46);};
+| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {status(47);};
 
 texp : or_exp {status(48);};
 
@@ -163,7 +165,7 @@ term : NAME {status(63);};
 | BOOLLIT  {status(66);};
 | CHARV  {status(67);};
 | OPENPAREN texp CLOSEPAREN {status(68);};
-| NAME OPENSQUARE term CLOSESQUARE {status(69);};
+| NAME multidim {status(69);};
 | function_call {status(70);};
 
 %%

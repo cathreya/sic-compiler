@@ -314,11 +314,11 @@ static yyconst int yy_ec[256] =
        20,   19,    1,    1,   21,   21,   21,   21,   21,   21,
        21,   21,   21,   21,   21,   21,   21,   21,   21,   21,
        21,   21,   21,   21,   21,   21,   21,   21,   21,   21,
-       22,   23,   24,    1,    1,    1,   25,   26,   27,   28,
+       22,   23,   24,    1,   25,    1,   26,   27,   28,   29,
 
-       29,   30,   21,   31,   32,   21,   33,   34,   35,   36,
-       37,   38,   21,   39,   40,   41,   42,   43,   44,   21,
-       21,   21,   45,   46,   47,    1,    1,    1,    1,    1,
+       30,   31,   21,   32,   33,   21,   34,   35,   36,   37,
+       38,   39,   21,   40,   41,   42,   43,   44,   45,   21,
+       21,   21,   46,   47,   48,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -335,30 +335,30 @@ static yyconst int yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst int yy_meta[48] =
+static yyconst int yy_meta[49] =
     {   0,
         1,    1,    1,    1,    2,    1,    1,    3,    1,    1,
         1,    1,    1,    1,    1,    1,    4,    1,    1,    1,
-        5,    1,    1,    1,    5,    5,    5,    5,    5,    5,
+        5,    1,    1,    1,    4,    5,    5,    5,    5,    5,
         5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
-        5,    5,    5,    5,    1,    1,    1
+        5,    5,    5,    5,    5,    1,    1,    1
     } ;
 
 static yyconst short int yy_base[115] =
     {   0,
-        0,    0,  145,  146,  146,  146,  124,    0,  123,  146,
-      119,  146,  146,  121,  146,  123,  123,   33,  146,  118,
-      117,    0,  146,  146,   12,   21,  102,   28,   31,  106,
-       95,  101,   95,  100,  146,  146,  146,  146,  125,  146,
-      121,  120,  110,    0,  109,   39,  146,    0,   88,   95,
+        0,    0,  146,  147,  147,  147,  125,    0,  124,  147,
+      120,  147,  147,  122,  147,  124,  124,   34,  147,  119,
+      118,    0,  147,  147,   12,   21,  102,   28,   31,  106,
+       95,  101,   95,  100,  147,  147,  147,  147,  126,  147,
+      122,  121,  111,    0,  110,   40,  147,    0,   88,   95,
        98,   86,   81,   86,   85,   81,   78,    0,   78,   74,
-       73,   71,   76,   79,   78,  146,  146,  101,    0,   74,
-       82,   67,   64,   75,   63,   73,   76,    0,   63,   77,
+       73,   71,   76,   79,   78,  147,  147,  102,    0,   74,
+       82,   67,   64,   75,   63,   73,   76,    0,   63,   78,
        56,   68,   55,   67,   60,   60,   60,    0,   62,   49,
-       50,   40,   49,    0,    0,   55,    0,   42,   36,   46,
+       50,   41,   49,    0,    0,   55,    0,   42,   36,   47,
 
-       50,   33,    0,   26,    0,    0,   30,    0,  146,   70,
-       75,   77,   82,   50
+       51,   33,    0,   26,    0,    0,   30,    0,  147,   71,
+       76,   78,   83,   51
     } ;
 
 static yyconst short int yy_def[115] =
@@ -378,55 +378,55 @@ static yyconst short int yy_def[115] =
       109,  109,  109,  109
     } ;
 
-static yyconst short int yy_nxt[194] =
+static yyconst short int yy_nxt[196] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
         9,   14,   15,   14,   16,   17,   18,   19,   20,   21,
-       22,   23,    4,   24,   22,   25,   26,   22,   27,   28,
-       22,   29,   22,   22,   22,   22,   22,   22,   30,   22,
-       31,   32,   33,   34,   35,   36,   37,   45,   49,   46,
-       50,   51,   54,   45,   69,   46,  100,   52,  108,   55,
-       58,   56,  100,  101,   57,   59,   60,  107,  106,  101,
-       39,   92,   39,   39,   39,   41,  105,  104,   41,   41,
-       48,   48,   68,  103,   68,   68,   68,  102,   99,   80,
-       94,   98,   97,   96,   95,   80,   94,   93,   92,   91,
+       22,   23,    4,   24,   22,   22,   25,   26,   22,   27,
+       28,   22,   29,   22,   22,   22,   22,   22,   22,   30,
+       22,   31,   32,   33,   34,   35,   36,   37,   45,   49,
+       46,   50,   51,   54,   45,   69,   46,  100,   52,  108,
+       55,   58,   56,  100,  101,   57,   59,   60,  107,  106,
+      101,   39,   92,   39,   39,   39,   41,  105,  104,   41,
+       41,   48,   48,   68,  103,   68,   68,   68,  102,   99,
+       80,   94,   98,   97,   96,   95,   80,   94,   93,   92,
 
-       90,   80,   89,   88,   87,   80,   86,   80,   67,   85,
-       84,   83,   82,   81,   80,   79,   78,   77,   76,   75,
-       74,   73,   72,   71,   70,   43,   43,   67,   67,   66,
-       65,   64,   63,   62,   61,   53,   38,   47,   44,   43,
-       40,   42,   40,   38,  109,    3,  109,  109,  109,  109,
+       91,   90,   80,   89,   88,   87,   80,   86,   80,   67,
+       85,   84,   83,   82,   81,   80,   79,   78,   77,   76,
+       75,   74,   73,   72,   71,   70,   43,   43,   67,   67,
+       66,   65,   64,   63,   62,   61,   53,   38,   47,   44,
+       43,   40,   42,   40,   38,  109,    3,  109,  109,  109,
       109,  109,  109,  109,  109,  109,  109,  109,  109,  109,
       109,  109,  109,  109,  109,  109,  109,  109,  109,  109,
       109,  109,  109,  109,  109,  109,  109,  109,  109,  109,
       109,  109,  109,  109,  109,  109,  109,  109,  109,  109,
-      109,  109,  109
+      109,  109,  109,  109,  109
 
     } ;
 
-static yyconst short int yy_chk[194] =
+static yyconst short int yy_chk[196] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,   18,   25,   18,
-       25,   26,   28,   46,  114,   46,   92,   26,  107,   28,
-       29,   28,  100,   92,   28,   29,   29,  104,  102,  100,
-      110,  101,  110,  110,  110,  111,   99,   98,  111,  111,
-      112,  112,  113,   96,  113,  113,  113,   93,   91,   90,
-       89,   87,   86,   85,   84,   83,   82,   81,   80,   79,
+        1,    1,    1,    1,    1,    1,    1,    1,   18,   25,
+       18,   25,   26,   28,   46,  114,   46,   92,   26,  107,
+       28,   29,   28,  100,   92,   28,   29,   29,  104,  102,
+      100,  110,  101,  110,  110,  110,  111,   99,   98,  111,
+      111,  112,  112,  113,   96,  113,  113,  113,   93,   91,
+       90,   89,   87,   86,   85,   84,   83,   82,   81,   80,
 
-       77,   76,   75,   74,   73,   72,   71,   70,   68,   65,
-       64,   63,   62,   61,   60,   59,   57,   56,   55,   54,
-       53,   52,   51,   50,   49,   45,   43,   42,   41,   39,
-       34,   33,   32,   31,   30,   27,   21,   20,   17,   16,
-       14,   11,    9,    7,    3,  109,  109,  109,  109,  109,
+       79,   77,   76,   75,   74,   73,   72,   71,   70,   68,
+       65,   64,   63,   62,   61,   60,   59,   57,   56,   55,
+       54,   53,   52,   51,   50,   49,   45,   43,   42,   41,
+       39,   34,   33,   32,   31,   30,   27,   21,   20,   17,
+       16,   14,   11,    9,    7,    3,  109,  109,  109,  109,
       109,  109,  109,  109,  109,  109,  109,  109,  109,  109,
       109,  109,  109,  109,  109,  109,  109,  109,  109,  109,
       109,  109,  109,  109,  109,  109,  109,  109,  109,  109,
       109,  109,  109,  109,  109,  109,  109,  109,  109,  109,
-      109,  109,  109
+      109,  109,  109,  109,  109
 
     } ;
 
@@ -674,7 +674,7 @@ yy_match:
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 146 );
+		while ( yy_base[yy_current_state] != 147 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -716,7 +716,7 @@ case 3:
 YY_RULE_SETUP
 #line 18 "scanner.l"
 {
-	cout<<"found a LIST_SEP;"<<endl;
+	cout<<lineno<<" found a LIST_SEP;"<<endl;
 	return LIST_SEP;
 }
 	YY_BREAK
@@ -724,7 +724,7 @@ case 4:
 YY_RULE_SETUP
 #line 22 "scanner.l"
 {
-	cout<<"found a STMT_SEP;"<<endl;
+	cout<<lineno<<" found a STMT_SEP;"<<endl;
 	return STMT_SEP;
 }
 	YY_BREAK
@@ -732,7 +732,7 @@ case 5:
 YY_RULE_SETUP
 #line 26 "scanner.l"
 {
-	cout<<"found a UNARY_OP;"<<endl;
+	cout<<lineno<<" found a UNARY_OP;"<<endl;
 	return UNARY_OP;
 }
 	YY_BREAK
@@ -740,7 +740,7 @@ case 6:
 YY_RULE_SETUP
 #line 30 "scanner.l"
 {
-	cout<<"found a ADD;"<<endl;
+	cout<<lineno<<" found a ADD;"<<endl;
 	return ADD;
 }
 	YY_BREAK
@@ -748,7 +748,7 @@ case 7:
 YY_RULE_SETUP
 #line 34 "scanner.l"
 {
-	cout<<"found a MUL;"<<endl;
+	cout<<lineno<<" found a MUL;"<<endl;
 	return MUL;
 }
 	YY_BREAK
@@ -756,7 +756,7 @@ case 8:
 YY_RULE_SETUP
 #line 38 "scanner.l"
 {
-	cout<<"found a REL;"<<endl;
+	cout<<lineno<<" found a REL;"<<endl;
 	return REL;
 }
 	YY_BREAK
@@ -764,7 +764,7 @@ case 9:
 YY_RULE_SETUP
 #line 42 "scanner.l"
 {
-	cout<<"found a EQ;"<<endl;
+	cout<<lineno<<" found a EQ;"<<endl;
 	return EQ;
 }
 	YY_BREAK
@@ -772,7 +772,7 @@ case 10:
 YY_RULE_SETUP
 #line 46 "scanner.l"
 {
-	cout<<"found a AND;"<<endl;
+	cout<<lineno<<" found a AND;"<<endl;
 	return AND;
 }
 	YY_BREAK
@@ -780,7 +780,7 @@ case 11:
 YY_RULE_SETUP
 #line 50 "scanner.l"
 {
-	cout<<"found a OR;"<<endl;
+	cout<<lineno<<" found a OR;"<<endl;
 	return OR;
 }
 	YY_BREAK
@@ -788,7 +788,7 @@ case 12:
 YY_RULE_SETUP
 #line 54 "scanner.l"
 {
-	cout<<"found a VOIDV;"<<endl;
+	cout<<lineno<<" found a VOIDV;"<<endl;
 	return VOIDV;
 }
 	YY_BREAK
@@ -797,7 +797,7 @@ YY_RULE_SETUP
 #line 58 "scanner.l"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<"found a TYPE;"<<endl;
+	cout<<lineno<<" found a TYPE;"<<endl;
 	return TYPE;
 }
 	YY_BREAK
@@ -805,7 +805,7 @@ case 14:
 YY_RULE_SETUP
 #line 63 "scanner.l"
 {
-	cout<<"found a RETURN;"<<endl;
+	cout<<lineno<<" found a RETURN;"<<endl;
 	return RETURN;
 }
 	YY_BREAK
@@ -813,7 +813,7 @@ case 15:
 YY_RULE_SETUP
 #line 67 "scanner.l"
 {
-	cout<<"found a BREAK;"<<endl;
+	cout<<lineno<<" found a BREAK;"<<endl;
 	return BREAK;
 }
 	YY_BREAK
@@ -821,7 +821,7 @@ case 16:
 YY_RULE_SETUP
 #line 71 "scanner.l"
 {
-	cout<<"found a CONTINUE;"<<endl;
+	cout<<lineno<<" found a CONTINUE;"<<endl;
 	return CONTINUE;
 }
 	YY_BREAK
@@ -829,7 +829,7 @@ case 17:
 YY_RULE_SETUP
 #line 75 "scanner.l"
 {
-	cout<<"found a IF;"<<endl;
+	cout<<lineno<<" found a IF;"<<endl;
 	return IF;
 }
 	YY_BREAK
@@ -837,7 +837,7 @@ case 18:
 YY_RULE_SETUP
 #line 79 "scanner.l"
 {
-	cout<<"found a ELSE;"<<endl;
+	cout<<lineno<<" found a ELSE;"<<endl;
 	return ELSE;
 }
 	YY_BREAK
@@ -845,7 +845,7 @@ case 19:
 YY_RULE_SETUP
 #line 83 "scanner.l"
 {
-	cout<<"found a FOR;"<<endl;
+	cout<<lineno<<" found a FOR;"<<endl;
 	return FOR;
 }
 	YY_BREAK
@@ -853,7 +853,7 @@ case 20:
 YY_RULE_SETUP
 #line 87 "scanner.l"
 {
-	cout<<"found a WHILE;"<<endl;
+	cout<<lineno<<" found a WHILE;"<<endl;
 	return WHILE;
 }
 	YY_BREAK
@@ -861,7 +861,7 @@ case 21:
 YY_RULE_SETUP
 #line 91 "scanner.l"
 {
-	cout<<"found a IMPORT;"<<endl;
+	cout<<lineno<<" found a IMPORT;"<<endl;
 	return IMPORT;
 }
 	YY_BREAK
@@ -870,7 +870,7 @@ YY_RULE_SETUP
 #line 95 "scanner.l"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<"found a BOOLLIT;"<<endl;
+	cout<<lineno<<" found a BOOLLIT;"<<endl;
 	return BOOLLIT;
 }
 	YY_BREAK
@@ -879,7 +879,7 @@ YY_RULE_SETUP
 #line 100 "scanner.l"
 { 
 	yylval.ival = atoi(yytext); 
-	cout<<"found a INTV;"<<endl;
+	cout<<lineno<<" found a INTV; "<<yytext<<endl;
 	return INTV;
 }
 	YY_BREAK
@@ -888,7 +888,7 @@ YY_RULE_SETUP
 #line 105 "scanner.l"
 {
 	yylval.ival = atof(yytext); 
-	cout<<"found a FLOATV;"<<endl;
+	cout<<lineno<<" found a FLOATV;"<<endl;
 	return FLOATV;
 }
 	YY_BREAK
@@ -898,7 +898,7 @@ YY_RULE_SETUP
 {
 	yylval.sval[0] = yytext[0];
 	yylval.sval[1] = 0;
-	cout<<"found a CHARV;"<<endl;
+	cout<<lineno<<" found a CHARV;"<<endl;
 	return CHARV;
 }
 	YY_BREAK
@@ -907,7 +907,7 @@ YY_RULE_SETUP
 #line 116 "scanner.l"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<"found a NAME; "<< yytext<<endl;
+	cout<<lineno<<" found a NAME; "<< yytext<<endl;
 	return NAME; 
 }
 	YY_BREAK
@@ -915,7 +915,7 @@ case 27:
 YY_RULE_SETUP
 #line 121 "scanner.l"
 {
-	cout<<"found a ASSIGN;"<<endl;
+	cout<<lineno<<" found a ASSIGN;"<<endl;
 	return ASSIGN;
 }
 	YY_BREAK
@@ -923,7 +923,7 @@ case 28:
 YY_RULE_SETUP
 #line 125 "scanner.l"
 {
-	cout<<"found a OPENPAREN;"<<endl;
+	cout<<lineno<<" found a OPENPAREN;"<<endl;
 	return OPENPAREN;
 }
 	YY_BREAK
@@ -931,7 +931,7 @@ case 29:
 YY_RULE_SETUP
 #line 129 "scanner.l"
 {
-	cout<<"found a CLOSEPAREN;"<<endl;
+	cout<<lineno<<" found a CLOSEPAREN;"<<endl;
 	return CLOSEPAREN;
 }
 	YY_BREAK
@@ -939,7 +939,7 @@ case 30:
 YY_RULE_SETUP
 #line 133 "scanner.l"
 {
-	cout<<"found a OPENBRACE;"<<endl;
+	cout<<lineno<<" found a OPENBRACE;"<<endl;
 	return OPENBRACE;
 }
 	YY_BREAK
@@ -947,7 +947,7 @@ case 31:
 YY_RULE_SETUP
 #line 137 "scanner.l"
 {
-	cout<<"found a CLOSEBRACE;"<<endl;
+	cout<<lineno<<" found a CLOSEBRACE;"<<endl;
 	return CLOSEBRACE;
 }
 	YY_BREAK
@@ -955,7 +955,7 @@ case 32:
 YY_RULE_SETUP
 #line 141 "scanner.l"
 {
-	cout<<"found a OPENSQUARE;"<<endl;
+	cout<<lineno<<" found a OPENSQUARE;"<<endl;
 	return OPENSQUARE;
 }
 	YY_BREAK
@@ -963,7 +963,7 @@ case 33:
 YY_RULE_SETUP
 #line 145 "scanner.l"
 {
-	cout<<"found a CLOSESQUARE;"<<endl;
+	cout<<lineno<<" found a CLOSESQUARE;"<<endl;
 	return CLOSESQUARE;
 }
 	YY_BREAK
@@ -972,7 +972,7 @@ YY_RULE_SETUP
 #line 149 "scanner.l"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<"found a STRINGLIT; "<<yytext<<endl;
+	cout<<lineno<<" found a STRINGLIT; "<<yytext<<endl;
 	return STRINGLIT;
 }
 	YY_BREAK
