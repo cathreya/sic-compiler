@@ -1,0 +1,104 @@
+import "io.sic";
+import "stdlib.sic";
+
+char[] author = "Saujas Vaduguru, 20171098";
+
+int readInt(){
+    char[20] num;
+    int i; i = 0;
+    char c;
+    while (true) {
+        c = read();
+        if (c == ' ') { break; }
+        num[i] = c;
+        i += 1;
+    }
+
+    return toInt(num);
+}
+
+void intToStr(int k, char[] num){
+    bool nonneg; nonneg = k >= 0; 
+    char[20] revnum;
+    if (!nonneg) {
+        k *= -1;
+    }
+
+    int i; i = 0;
+    int z; z = '0';
+    while (k > 0){
+        revnum[i] = k % 10 + z;
+        i += 1;
+    }
+
+    int j; j = 0;
+    if (!nonneg){
+        num[j] = '-';
+        j += 1;
+    }
+
+    while (i >= 0){
+        i -= 1;
+        num[j] = revnum[i];
+        j += 1;
+    }
+
+    num[j] = '\0';
+}
+
+void util(int[100] a, int n, int dig){
+	int[100] out;
+
+	int[10] count;
+
+	for(int i=0;i<n;i+=1){
+		count[(a[i]/dig)%10] += 1;
+	}
+
+	for(int i=1;i<10;i+=1){
+		count[i] += count[i-1];
+	}
+
+	for(int i=n-1;i>=0;i-=1){
+		out[count[(a[i]/dig)%10] -1] = arr[i];
+		count[(a[i]/dig)%10] -= 1;
+	}
+
+	for(i=0;i<n;i+=1){
+		a[i] = out[i];
+	}
+}
+
+void insertionSort(int[] arr, int n){
+    int i; int key; int j;  
+    for (i = 1; i < n; i += 1) 
+    {  
+        key = arr[i];  
+        j = i - 1;
+        while (j >= 0 & arr[j] > key) 
+        {  
+            arr[j + 1] = arr[j];  
+            j -= 1;  
+        }  
+        arr[j + 1] = key;  
+    }
+}
+
+int main(){
+	int n;
+	n = read();
+	int[100] a;
+	for(int i=0;i<n;i+=1){
+		a[i] = readInt();
+	}
+	insertionSort(a,n);
+
+    char[20] buffer;
+	for(int i=0;i<n;i+=1){
+        intToStr(a[i], buffer);
+		write(buffer);
+        write(" ");
+	}
+
+    write("\n");
+}

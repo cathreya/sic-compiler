@@ -1,0 +1,74 @@
+import "io.sic";
+import "stdlib.sic";
+
+char[] author = "Athreya C, 2018121002";
+
+int readInt(){
+    char[20] num;
+    int i; i = 0;
+    char c;
+    while (true) {
+        c = read();
+        if (c == ' ') { break; }
+        num[i] = c;
+        i += 1;
+    }
+
+    return toInt(num);
+}
+
+void intToStr(int k, char[] num){
+    bool nonneg; nonneg = k >= 0; 
+    char[20] revnum;
+    if (!nonneg) {
+        k *= -1;
+    }
+
+    int i; i = 0;
+    int z; z = '0';
+    while (k > 0){
+        revnum[i] = k % 10 + z;
+        i += 1;
+    }
+
+    int j; j = 0;
+    if (!nonneg){
+        num[j] = '-';
+        j += 1;
+    }
+
+    while (i >= 0){
+        i -= 1;
+        num[j] = revnum[i];
+        j += 1;
+    }
+
+    num[j] = '\0';
+}
+
+int pow(int base, int expo){
+	int prod; prod = 1;
+	for(int i=0;i<expo;i+=1){
+		prod = prod*base;
+	}
+	return prod;
+}
+
+int main(){
+	int n;
+	n = readInt();
+
+    char[20] buffer;
+	for(int i=0;i<pow(2,n);i+=1){
+		for(int j=0;j<n;j+=1){
+			int k; k = i/pow(2,j);
+			if(k%2==1){
+                intToStr(j, buffer);
+				write(buffer);
+				write(" ");
+			}
+		}
+		write("\n");
+	}	
+	return 0;
+}

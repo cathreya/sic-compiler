@@ -1,0 +1,94 @@
+import "io.sic";
+import "stdlib.sic";
+
+char[] author = "Athreya C, 2018121002";
+
+int readInt(){
+    char[20] num;
+    int i; i = 0;
+    char c;
+    while (true) {
+        c = read();
+        if (c == ' ') { break; }
+        num[i] = c;
+        i += 1;
+    }
+
+    return toInt(num);
+}
+
+void intToStr(int k, char[] num){
+    bool nonneg; nonneg = k >= 0; 
+    char[20] revnum;
+    if (!nonneg) {
+        k *= -1;
+    }
+
+    int i; i = 0;
+    int z; z = '0';
+    while (k > 0){
+        revnum[i] = k % 10 + z;
+        i += 1;
+    }
+
+    int j; j = 0;
+    if (!nonneg){
+        num[j] = '-';
+        j += 1;
+    }
+
+    while (i >= 0){
+        i -= 1;
+        num[j] = revnum[i];
+        j += 1;
+    }
+
+    num[j] = '\0';
+}
+
+int strcmp(char[100] a, char[100] b){
+	int i=0;
+	while(a[i]!='\0' & b[i]!='\0'){
+		if(a[i]!=b[i]){
+			return 0;
+		}
+	}
+	if(a[i] == b[i] & a[i]=='\0'){
+		return 1;
+	}
+	return 0;
+}
+
+int main(){
+	char[100][100] wordlist;
+	int n; n=0;
+	file f = open("filename.txt","r");
+	char c;
+	int i;i=0;
+	while(c = fileread(f)){
+		wordlist[n][i] = c;
+		if(c == '\n' | c == ' '){
+			wordlist[n][i] = '\0';
+			for(int j=0;j<n;j+=1){
+				if(strcmp(wordlist[j],wordlist[n])){
+					n-=1;
+					break;
+				}		
+			}
+			i=0;
+			n+=1;
+		}
+	}
+
+    char[20] buffer;
+	for(int i=0;i<n;i+=1){
+		int j; j=0;
+		while(wordlist[i][j] != '\0'){
+            intToStr(wordlist[i][j], buffer);
+			write(buffer);
+            write(" ");
+		}
+		write("\n");
+	}
+	return 0;
+}

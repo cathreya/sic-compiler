@@ -1,0 +1,141 @@
+import "io.sic";
+import "stdlib.sic";
+
+char[] author = "Saujas Vaduguru, 20171098";
+
+int readInt(){
+    char[20] num;
+    int i; i = 0;
+    char c;
+    while (true) {
+        c = read();
+        if (c == ' ') { break; }
+        num[i] = c;
+        i += 1;
+    }
+
+    return toInt(num);
+}
+
+void intToStr(int k, char[] num){
+    bool nonneg; nonneg = k >= 0; 
+    char[20] revnum;
+    if (!nonneg) {
+        k *= -1;
+    }
+
+    int i; i = 0;
+    int z; z = '0';
+    while (k > 0){
+        revnum[i] = k % 10 + z;
+        i += 1;
+    }
+
+    int j; j = 0;
+    if (!nonneg){
+        num[j] = '-';
+        j += 1;
+    }
+
+    while (i >= 0){
+        i -= 1;
+        num[j] = revnum[i];
+        j += 1;
+    }
+
+    num[j] = '\0';
+}
+
+void merge(int[] a, int start, int end, int halfway)
+{
+	int i; int j; int k;
+
+	int[100] temp;
+	for (i = start; i <= end; i+=1){
+		temp[i - start] = a[i];
+    }
+	int len_temp; len_temp = end - start + 1;
+	int halfway_temp; halfway_temp = halfway - start;
+
+	i = 0; 	
+	j = halfway_temp + 1;
+	k = start;
+	bool first_half_done = false; bool second_half_done = false;
+	while (true)
+	{
+		if (i > halfway_temp) {
+			first_half_done = true;
+        }
+
+		if (j >= len_temp) {
+			second_half_done = true;
+        }
+
+		if (first_half_done)
+		{
+			if (second_half_done){
+				break;
+            }
+			else {
+				a[k] = temp[j];
+				j += 1;
+			}
+		}
+		else
+		{
+			if (second_half_done)
+			{
+				a[k] = temp[i];
+				i += 1;
+			}
+			else
+			{
+				if (temp[i] <= temp[j])
+				{
+					a[k] = temp[i];
+					i += 1;
+				}
+				else
+				{
+					a[k] = temp[j];
+					j += 1;
+				}
+			}
+		}
+		k+=1;
+	}
+}
+
+void msort(int[] a, int start, int end)
+{
+	if (end - start == 0) {
+		return;
+    }
+
+	int halfway = (start + end) / 2;
+
+	msort(a, start, halfway);
+
+	msort(a, halfway + 1, end);
+
+	merge(a, start, end, halfway);
+}
+
+int main(){
+	int n;
+	n = read();
+	int[100] a;
+	for(int i=0;i<n;i+=1){
+		a[i] = readInt();
+	}
+	msort(a,n);
+
+    char[20] buffer;
+	for(int i=0;i<n;i+=1){
+        intToStr(a[i], buffer);
+		write(buffer);
+        write(" ");
+	}
+
+    write("\n");
+}

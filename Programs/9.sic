@@ -1,0 +1,91 @@
+import "io.sic";
+import "stdlib.sic";
+
+char[] author = "Athreya C, 2018121002";
+
+int readInt(){
+    char[20] num;
+    int i; i = 0;
+    char c;
+    while (true) {
+        c = read();
+        if (c == ' ') { break; }
+        num[i] = c;
+        i += 1;
+    }
+
+    return toInt(num);
+}
+
+void intToStr(int k, char[] num){
+    bool nonneg; nonneg = k >= 0; 
+    char[20] revnum;
+    if (!nonneg) {
+        k *= -1;
+    }
+
+    int i; i = 0;
+    int z; z = '0';
+    while (k > 0){
+        revnum[i] = k % 10 + z;
+        i += 1;
+    }
+
+    int j; j = 0;
+    if (!nonneg){
+        num[j] = '-';
+        j += 1;
+    }
+
+    while (i >= 0){
+        i -= 1;
+        num[j] = revnum[i];
+        j += 1;
+    }
+
+    num[j] = '\0';
+}
+
+int main(){
+	int[100][100] mat1;
+	int[100][100] mat2;
+
+	int n1; n1 = read();
+	int m1; m1 = read();
+
+	int n2; n2 = read();
+	int m2; m2 = read();
+
+	for(int i=0;i<n1;i+=1){
+		for(int j=0;j<m1;j+=1){
+			mat1[i][j] = read();
+		}
+	}
+
+	for(int i=0;i<n2;i+=1){
+		for(int j=0;j<m2;j+=1){
+			mat2[i][j] = read();
+		}
+	}
+
+	if(n1 != n2 | m1 != m2){
+		write(-1);
+		return 0;
+	}
+	
+    char[20] buffer;
+	for(int i=0;i<n1;i+=1){
+		for(int j=0;j<m1;j+=1){
+			int val; val = mat1[i][j] + mat2[i][j];
+            intToStr(val, buffer);
+			write(buffer);
+			write(" ");
+		}
+		write("\n");
+	}
+
+	
+	
+
+	return 0;
+}

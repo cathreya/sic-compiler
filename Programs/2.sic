@@ -1,0 +1,36 @@
+import "io.sic";
+import "stdlib.sic";
+
+char[] author = "Saujas Vaduguru, 20171098";
+
+int readInt(){
+    char[20] num;
+    int i; i = 0;
+    char c;
+    while (true) {
+        c = read();
+        if (c == ' ') { break; }
+        num[i] = c;
+        i += 1;
+    }
+
+    return toInt(num);
+}
+
+int main(){
+    int n; n = readInt();
+
+    bool prime; prime = false;
+    for (int i = 2; i < n; i += 1){
+        if (n % i == 0){
+            prime = true;
+        }
+    }
+
+    if (prime) {
+        write("yes\n");
+    }
+    else {
+        write("no\n");
+    }
+}
