@@ -445,7 +445,7 @@ char *yytext;
 #include <cstdio>
 #include <iostream>
 using namespace std;
-// #include "parser.tab.h"
+#include "parser.tab.h"
 int lineno = 0;
 extern int yylex();
 
@@ -713,7 +713,7 @@ YY_RULE_SETUP
 #line 18 "scanner.l"
 {
 	cout<<"found a LIST_SEP;"<<endl;
-	// return LIST_SEP;
+	return LIST_SEP;
 }
 	YY_BREAK
 case 4:
@@ -721,7 +721,7 @@ YY_RULE_SETUP
 #line 22 "scanner.l"
 {
 	cout<<"found a STMT_SEP;"<<endl;
-	// return STMT_SEP;
+	return STMT_SEP;
 }
 	YY_BREAK
 case 5:
@@ -729,7 +729,7 @@ YY_RULE_SETUP
 #line 26 "scanner.l"
 {
 	cout<<"found a UNARY_OP;"<<endl;
-	// return UNARY_OP;
+	return UNARY_OP;
 }
 	YY_BREAK
 case 6:
@@ -737,7 +737,7 @@ YY_RULE_SETUP
 #line 30 "scanner.l"
 {
 	cout<<"found a ADD;"<<endl;
-	// return ADD;
+	return ADD;
 }
 	YY_BREAK
 case 7:
@@ -745,7 +745,7 @@ YY_RULE_SETUP
 #line 34 "scanner.l"
 {
 	cout<<"found a MUL;"<<endl;
-	// return MUL;
+	return MUL;
 }
 	YY_BREAK
 case 8:
@@ -753,7 +753,7 @@ YY_RULE_SETUP
 #line 38 "scanner.l"
 {
 	cout<<"found a REL;"<<endl;
-	// return REL;
+	return REL;
 }
 	YY_BREAK
 case 9:
@@ -761,7 +761,7 @@ YY_RULE_SETUP
 #line 42 "scanner.l"
 {
 	cout<<"found a EQ;"<<endl;
-	// return EQ;
+	return EQ;
 }
 	YY_BREAK
 case 10:
@@ -769,7 +769,7 @@ YY_RULE_SETUP
 #line 46 "scanner.l"
 {
 	cout<<"found a AND;"<<endl;
-	// return AND;
+	return AND;
 }
 	YY_BREAK
 case 11:
@@ -777,7 +777,7 @@ YY_RULE_SETUP
 #line 50 "scanner.l"
 {
 	cout<<"found a OR;"<<endl;
-	// return OR;
+	return OR;
 }
 	YY_BREAK
 case 12:
@@ -785,7 +785,7 @@ YY_RULE_SETUP
 #line 54 "scanner.l"
 {
 	cout<<"found a VOIDV;"<<endl;
-	// return VOIDV;
+	return VOIDV;
 }
 	YY_BREAK
 case 13:
@@ -794,7 +794,7 @@ YY_RULE_SETUP
 {
 	//strcpy(//yylval.sval,yytext);
 	cout<<"found a TYPE;"<<endl;
-	// return TYPE;
+	return TYPE;
 }
 	YY_BREAK
 case 14:
@@ -802,7 +802,7 @@ YY_RULE_SETUP
 #line 63 "scanner.l"
 {
 	cout<<"found a RETURN;"<<endl;
-	// return RETURN;
+	return RETURN;
 }
 	YY_BREAK
 case 15:
@@ -810,7 +810,7 @@ YY_RULE_SETUP
 #line 67 "scanner.l"
 {
 	cout<<"found a BREAK;"<<endl;
-	// return BREAK;
+	return BREAK;
 }
 	YY_BREAK
 case 16:
@@ -818,7 +818,7 @@ YY_RULE_SETUP
 #line 71 "scanner.l"
 {
 	cout<<"found a CONTINUE;"<<endl;
-	// return CONTINUE;
+	return CONTINUE;
 }
 	YY_BREAK
 case 17:
@@ -826,7 +826,7 @@ YY_RULE_SETUP
 #line 75 "scanner.l"
 {
 	cout<<"found a IF;"<<endl;
-	// return IF;
+	return IF;
 }
 	YY_BREAK
 case 18:
@@ -834,7 +834,7 @@ YY_RULE_SETUP
 #line 79 "scanner.l"
 {
 	cout<<"found a ELSE;"<<endl;
-	// return ELSE;
+	return ELSE;
 }
 	YY_BREAK
 case 19:
@@ -842,7 +842,7 @@ YY_RULE_SETUP
 #line 83 "scanner.l"
 {
 	cout<<"found a FOR;"<<endl;
-	// return FOR;
+	return FOR;
 }
 	YY_BREAK
 case 20:
@@ -850,7 +850,7 @@ YY_RULE_SETUP
 #line 87 "scanner.l"
 {
 	cout<<"found a WHILE;"<<endl;
-	// return WHILE;
+	return WHILE;
 }
 	YY_BREAK
 case 21:
@@ -858,7 +858,7 @@ YY_RULE_SETUP
 #line 91 "scanner.l"
 {
 	cout<<"found a IMPORT;"<<endl;
-	// return IMPORT;
+	return IMPORT;
 }
 	YY_BREAK
 case 22:
@@ -867,7 +867,7 @@ YY_RULE_SETUP
 {
 	//strcpy(//yylval.sval,yytext);
 	cout<<"found a BOOLLIT;"<<endl;
-	// return BOOLLIT;
+	return BOOLLIT;
 }
 	YY_BREAK
 case 23:
@@ -875,8 +875,8 @@ YY_RULE_SETUP
 #line 100 "scanner.l"
 { 
 	//yylval.ival = atoi(yytext); 
-	cout<<"found a INTEG;"<<endl;
-	// return INTEG;
+	cout<<"found a INTV;"<<endl;
+	return INTV;
 }
 	YY_BREAK
 case 24:
@@ -885,7 +885,7 @@ YY_RULE_SETUP
 {
 	//yylval.ival = atof(yytext); 
 	cout<<"found a FLOATV;"<<endl;
-	// return FLOATV;
+	return FLOATV;
 }
 	YY_BREAK
 case 25:
@@ -895,7 +895,7 @@ YY_RULE_SETUP
 	//yylval.sval[0] = yytext[0];
 	//yylval.sval[1] = 0;
 	cout<<"found a CHARV;"<<endl;
-	// return CHARV;
+	return CHARV;
 }
 	YY_BREAK
 case 26:
@@ -904,7 +904,7 @@ YY_RULE_SETUP
 {
 	//strcpy(//yylval.sval,yytext);
 	cout<<"found a NAME;" <<endl;
-	// return NAME; 
+	return NAME; 
 }
 	YY_BREAK
 case 27:
@@ -912,7 +912,7 @@ YY_RULE_SETUP
 #line 121 "scanner.l"
 {
 	cout<<"found a ASSIGN;"<<endl;
-	// return ASSIGN;
+	return ASSIGN;
 }
 	YY_BREAK
 case 28:
@@ -920,7 +920,7 @@ YY_RULE_SETUP
 #line 125 "scanner.l"
 {
 	cout<<"found a OPENPAREN;"<<endl;
-	// return OPENPAREN;
+	return OPENPAREN;
 }
 	YY_BREAK
 case 29:
@@ -928,7 +928,7 @@ YY_RULE_SETUP
 #line 129 "scanner.l"
 {
 	cout<<"found a CLOSEPAREN;"<<endl;
-	// return CLOSEPAREN;
+	return CLOSEPAREN;
 }
 	YY_BREAK
 case 30:
@@ -936,7 +936,7 @@ YY_RULE_SETUP
 #line 133 "scanner.l"
 {
 	cout<<"found a OPENBRACE;"<<endl;
-	// return OPENBRACE;
+	return OPENBRACE;
 }
 	YY_BREAK
 case 31:
@@ -944,7 +944,7 @@ YY_RULE_SETUP
 #line 137 "scanner.l"
 {
 	cout<<"found a CLOSEBRACE;"<<endl;
-	// return CLOSEBRACE;
+	return CLOSEBRACE;
 }
 	YY_BREAK
 case 32:
@@ -952,7 +952,7 @@ YY_RULE_SETUP
 #line 141 "scanner.l"
 {
 	cout<<"found a OPENSQUARE;"<<endl;
-	// return OPENSQUARE;
+	return OPENSQUARE;
 }
 	YY_BREAK
 case 33:
@@ -960,7 +960,7 @@ YY_RULE_SETUP
 #line 145 "scanner.l"
 {
 	cout<<"found a CLOSESQUARE;"<<endl;
-	// return CLOSESQUARE;
+	return CLOSESQUARE;
 }
 	YY_BREAK
 case 34:
@@ -969,7 +969,7 @@ YY_RULE_SETUP
 {
 	//strcpy(//yylval.sval,yytext);
 	cout<<"found a STRINGLIT;"<<endl;
-	// return STRINGLIT;
+	return STRINGLIT;
 }
 	YY_BREAK
 case 35:
@@ -1880,6 +1880,6 @@ int main()
 #line 157 "scanner.l"
 
 
-int main(){
-	while(yylex());
-}
+// int main(){
+// 	while(yylex());
+// }
