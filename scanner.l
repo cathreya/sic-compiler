@@ -55,8 +55,8 @@ extern int yylex();
 	cout<<"found a VOIDV;"<<endl;
 	return VOIDV;
 }
-("uint"|"int"|"float"|"char"|"file")("["[0-9]*"]")* {
-	//strcpy(//yylval.sval,yytext);
+("uint"|"int"|"float"|"char"|"file"|"bool")("["[0-9]*"]")* {
+	strcpy(yylval.sval,yytext);
 	cout<<"found a TYPE;"<<endl;
 	return TYPE;
 }
@@ -93,29 +93,29 @@ import {
 	return IMPORT;
 }
 true|false {
-	//strcpy(//yylval.sval,yytext);
+	strcpy(yylval.sval,yytext);
 	cout<<"found a BOOLLIT;"<<endl;
 	return BOOLLIT;
 }
 [0-9]+ { 
-	//yylval.ival = atoi(yytext); 
+	yylval.ival = atoi(yytext); 
 	cout<<"found a INTV;"<<endl;
 	return INTV;
 }
 [0-9]*[.][0-9]+ {
-	//yylval.ival = atof(yytext); 
+	yylval.ival = atof(yytext); 
 	cout<<"found a FLOATV;"<<endl;
 	return FLOATV;
 }
 ("\'"[^"\'"]"\'")|("\'\\"[^"\'"]"\'") {
-	//yylval.sval[0] = yytext[0];
-	//yylval.sval[1] = 0;
+	yylval.sval[0] = yytext[0];
+	yylval.sval[1] = 0;
 	cout<<"found a CHARV;"<<endl;
 	return CHARV;
 }
 [a-zA-Z][a-zA-Z0-9]* {
-	//strcpy(//yylval.sval,yytext);
-	cout<<"found a NAME;" <<endl;
+	strcpy(yylval.sval,yytext);
+	cout<<"found a NAME; "<< yytext<<endl;
 	return NAME; 
 }
 ['+''-''*''%']?= {
@@ -147,11 +147,11 @@ true|false {
 	return CLOSESQUARE;
 }
 "\""[^"\""]+"\"" {
-	//strcpy(//yylval.sval,yytext);
-	cout<<"found a STRINGLIT;"<<endl;
+	strcpy(yylval.sval,yytext);
+	cout<<"found a STRINGLIT; "<<yytext<<endl;
 	return STRINGLIT;
 }
-\n		{ ++lineno; return '\n'; }
+\n		{ ++lineno;}
 .		{ printf("Line No %d: Unrecognized character '%c'\n", lineno, yytext[0]);}
 
 %%
