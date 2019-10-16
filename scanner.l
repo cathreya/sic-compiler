@@ -118,7 +118,7 @@ true|false {
 	cout<<"found a NAME; "<< yytext<<endl;
 	return NAME; 
 }
-['+''-''*''%']?= {
+("+"|"-"|"*"|"%")?= {
 	cout<<"found a ASSIGN;"<<endl;
 	return ASSIGN;
 }
