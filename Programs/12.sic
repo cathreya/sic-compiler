@@ -65,7 +65,8 @@ int main(){
 	file f = open("filename.txt","r");
 	char c;
 	int i;i=0;
-	while(c = fileread(f)){
+	c = fileread(f);
+	while(c){
 		wordlist[n][i] = c;
 		if(c == '\n' | c == ' '){
 			wordlist[n][i] = '\0';
@@ -78,6 +79,7 @@ int main(){
 			i=0;
 			n+=1;
 		}
+		c = fileread(f);
 	}
 
     char[20] buffer;
