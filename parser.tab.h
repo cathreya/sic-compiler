@@ -77,7 +77,9 @@ extern int yydebug;
     REL = 287,
     ADD = 288,
     MUL = 289,
-    UNARY_OP = 290
+    UNARY_OP = 290,
+    TQ = 291,
+    TE = 292
   };
 #endif
 
@@ -92,7 +94,7 @@ union YYSTYPE
 	float fval;
 	char  sval[100];
 
-#line 96 "parser.tab.h" /* yacc.c:1909  */
+#line 98 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

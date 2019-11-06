@@ -67,6 +67,7 @@ int main(){
 	N = readInt();
 	k = readInt();
 
+    float a = 0.25;
     char[50] result;
     intToStr(g(N,k), result);
 	write(result);

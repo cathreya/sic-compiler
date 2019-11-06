@@ -56,6 +56,8 @@
 %token  <sval> ADD
 %token  <sval> MUL
 %token  <sval> UNARY_OP
+%token  <sval> TQ
+%token  <sval> TE
 
 
 
@@ -137,6 +139,7 @@ for_block : FOR OPENPAREN STMT_SEP STMT_SEP CLOSEPAREN statement_block {status(4
 | FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {status(47);};
 
 texp : or_exp {status(48);};
+| or_exp TQ texp TE or_exp
 
 or_exp : and_exp {status(49);};
 | or_exp OR and_exp {status(50);};

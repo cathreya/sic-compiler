@@ -122,6 +122,15 @@ true|false {
 	cout<<lineno<<" found a ASSIGN;"<<endl;
 	return ASSIGN;
 }
+"?" {
+	cout<<lineno<<" found a TQ;"<<endl;
+	return TQ;
+}
+":" {
+	cout<<lineno<<" found a TE;"<<endl;
+	return TE;
+}
+
 "(" {
 	cout<<lineno<<" found a OPENPAREN;"<<endl;
 	return OPENPAREN;
