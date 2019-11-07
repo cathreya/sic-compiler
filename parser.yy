@@ -9,6 +9,9 @@
 	extern int yylex();
 	extern int yyparse();
 	extern FILE *yyin;
+
+	extern StartNode *root;
+
 	void yyerror(char const *s);
 	int production = 1;
 
@@ -125,17 +128,19 @@
 %%
 start : imports program { 
 	$$ = new StartNode($1,$2);
+	root = $$;
 	std::cout << "Parse successful!" << std::endl; 
 }
 | program { 
 	$$ = new StartNode(NULL,$1);
+	root = $$;
 	std::cout << "Parse successful!" << std::endl;
 }
 
 imports : IMPORT string STMT_SEP {$$ = new std::vector<Imports*> ({new Imports($2)});}
 | imports IMPORT string STMT_SEP {$1->push_back(new Imports($3)); $$ = $1;}
 
-prog_element : declaration STMT_SEP {$$ = $1;}
+prog_element : declaration STMT_SEP {$1->set_sc(1); $$ = $1;}
 | function_definition {$$ = $1;}
 
 program : program prog_element {$1->push_back($2); $$ = $1;}
@@ -145,6 +150,7 @@ declaration : TYPE NAME ASSIGN string {$$ = new VarDec(std::string($1), NULL, st
 | TYPE NAME  {$$ = new VarDec(std::string($1), NULL, std::string($2), NULL);}
 | TYPE NAME ASSIGN texp  {$$ = new VarDec(std::string($1), NULL, std::string($2), $4);}
 | TYPE multidim NAME  {$$ = new VarDec(std::string($1), $2, std::string($3), NULL);}
+| TYPE multidim NAME ASSIGN string {$$ = new VarDec(std::string($1), $2, std::string($3), $5);}
 
 function_definition : TYPE NAME OPENPAREN parameters CLOSEPAREN statement_block {$$ = new FuncDef(std::string($1),std::string($2),$4,$6);}
 | TYPE NAME OPENPAREN CLOSEPAREN statement_block {$$ = new FuncDef(std::string($1),std::string($2),NULL,$5);}
@@ -164,21 +170,21 @@ statement_list : statementsc STMT_SEP {$$ = new std::vector<Statement*> ({$1});}
 | statement_list statementsc STMT_SEP {$1->push_back($2); $$ = $1;}
 | statement_list statementcurly {$1->push_back($2); $$ = $1;;}
 
-statementsc : declaration {$$ = $1;}
-| assignment_statement {$$ = $1;}
-| function_call {$$ = $1;}
-| BREAK {$$ = new Break();}
-| CONTINUE {$$ = new Continue();}
-| RETURN {$$ = new Return(NULL);}
-| RETURN texp {$$ = new Return($2);}
-| RETURN string {$$ = new Return($2);}
+statementsc : declaration {$1->set_sc(1); $$ = $1;}
+| assignment_statement {$1->set_sc(1); $$ = $1;}
+| function_call {$1->set_sc(1); $$ = $1;}
+| BREAK {$$ = new Break(); $$->set_sc(1);}
+| CONTINUE {$$ = new Continue(); $$->set_sc(1);}
+| RETURN {$$ = new Return(NULL); $$->set_sc(1);}
+| RETURN texp {$$ = new Return($2); $$->set_sc(1);}
+| RETURN string {$$ = new Return($2); $$->set_sc(1);}
 
-statementcurly : if_block {$$ = $1;}
-| while_block {$$ = $1;}
-| for_block {$$ = $1;}
+statementcurly : if_block {$1->set_sc(0); $$ = $1;}
+| while_block {$1->set_sc(0); $$ = $1;}
+| for_block {$1->set_sc(0); $$ = $1;}
 
-assignment_statement : NAME ASSIGN texp {$$ = new Assign(std::string($1),$3);}
-| NAME multidim ASSIGN texp {$$ = new ArrayAssign(std::string($1),$2,$4);}
+assignment_statement : NAME ASSIGN texp {$$ = new Assign(std::string($1),$2,$3);}
+| NAME multidim ASSIGN texp {$$ = new ArrayAssign(std::string($1),$2,$3,$4);}
 
 multidim : OPENSQUARE texp CLOSESQUARE {$$ = new std::vector<Square*> ({new Square($2)});}
 | multidim OPENSQUARE texp CLOSESQUARE {$1->push_back(new Square($3)); $$ = $1;}
@@ -197,13 +203,13 @@ if_block : IF OPENPAREN texp CLOSEPAREN statement_block {$$ = new IfStmt($3,$5,N
 while_block : WHILE OPENPAREN texp CLOSEPAREN statement_block {$$ = new While($3, $5);}
 
 for_block : FOR OPENPAREN STMT_SEP STMT_SEP CLOSEPAREN statement_block {$$ = new For(NULL, NULL, NULL, $6);}
-| FOR OPENPAREN STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {$$ = new For(NULL,NULL,$5,$7);}
+| FOR OPENPAREN STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {$5->set_sc(0); $$ = new For(NULL,NULL,$5,$7);}
 | FOR OPENPAREN STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {$$ = new For(NULL,$4,NULL,$7);}
-| FOR OPENPAREN STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {$$ = new For(NULL,$4,$6,$8);}
-| FOR OPENPAREN statementsc STMT_SEP STMT_SEP CLOSEPAREN statement_block {$$ = new For($3,NULL,NULL,$7);}
-| FOR OPENPAREN statementsc STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {$$ = new For($3, NULL, $6, $8);}
-| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {$$ = new For($3, $5, NULL, $8);}
-| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {$$ = new For($3, $5, $7, $9);}
+| FOR OPENPAREN STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {$6->set_sc(0); $$ = new For(NULL,$4,$6,$8);}
+| FOR OPENPAREN statementsc STMT_SEP STMT_SEP CLOSEPAREN statement_block {$3->set_sc(0); $$ = new For($3,NULL,NULL,$7);}
+| FOR OPENPAREN statementsc STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {$6->set_sc(0); $3->set_sc(0); $$ = new For($3, NULL, $6, $8);}
+| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {$3->set_sc(0); $$ = new For($3, $5, NULL, $8);}
+| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {$3->set_sc(0); $7->set_sc(0); $$ = new For($3, $5, $7, $9);}
 
 texp : or_exp {$$ = $1;}
 | or_exp TQ texp TE or_exp {$$ = new TernaryOperator($1,$3,$5);}
@@ -234,10 +240,10 @@ term : NAME {$$ = new Name($1);}
 | FLOATV  {$$ = new Float($1);}
 | INTV  {$$ = new Int($1);}
 | BOOLLIT  {$$ = new Bool($1);}
-| CHARV  {$$ = new Char($1[0]);}
+| CHARV  {$$ = new Char(std::string($1));}
 | OPENPAREN texp CLOSEPAREN {$$ = new ParenExp($2);}
 | NAME multidim {$$ = new MultiDimArr(std::string($1),$2);}
-| function_call { $$ = $1;}
+| function_call {$1->set_sc(0); $$ = $1;}
 
 string : STRINGLIT {$$ = new String(std::string($1));}
 
@@ -249,11 +255,11 @@ void yyerror(char const *s)
 }
 
 
-main(int argc, char **argv)
-{
-				yyparse();
-				printf("Parsing Over\n");
-}
+// main(int argc, char **argv)
+// {
+// 				yyparse();
+// 				printf("Parsing Over\n");
+// }
 
 
 

@@ -86,10 +86,10 @@ private:
 
 class Bool: public Term{
 public:
-	Bool(bool val){
+	Bool(std::string val){
 		set_val(val);
 	}
-	bool get_val(){
+	std::string get_val(){
 		return this->val;
 	}
 	void accept(Visitor *v){
@@ -97,18 +97,18 @@ public:
 	}
 	~Bool(){}
 private:
-	bool val;
-	void set_val(bool val){
+	std::string val;
+	void set_val(std::string val){
 		this->val = val;
 	}	
 };
 
 class Char: public Term{
 public:
-	Char(char val){
+	Char(std::string val){
 		set_val(val);
 	}
-	char get_val(){
+	std::string get_val(){
 		return this->val;
 	}
 	void accept(Visitor *v){
@@ -116,8 +116,8 @@ public:
 	}
 	~Char(){}
 private:
-	char val;
-	void set_val(char val){
+	std::string val;
+	void set_val(std::string val){
 		this->val = val;
 	}	
 };
@@ -325,30 +325,42 @@ private:
 
 class Statement: public Node{
 public:
-	Statement(){}
+	Statement(int sc=0){
+		set_sc(sc);
+	}
 	void accept(Visitor *v)=0;
+	int get_sc(){
+		return this->sc;
+	}
+	void set_sc(int sc){
+		this->sc = sc;
+	}
 	~Statement(){}
+private:
+	int sc;
 };
 
 class AssignPar: public Statement{
 public:
 	AssignPar(){}
-	void accept(Visitor *v){
-		v->visit(this);
-	}
+	void accept(Visitor *v)=0;
 	~AssignPar(){}
 };
 
 
 class ArrayAssign: public AssignPar{
 public:
-	ArrayAssign(std::string name, std::vector<Square*> *dims, Node *right){
+	ArrayAssign(std::string name, std::vector<Square*> *dims, std::string op, Node *right){
 		set_name(name);
 		set_dims(dims);
+		set_op(op);
 		set_right(right);
 	}
 	std::string get_name(){
 		return this->name;
+	}
+	std::string get_op(){
+		return this->op;
 	}
 	std::vector<Square*> *get_dims(){
 		return this->dims;
@@ -363,9 +375,12 @@ public:
 private:
 	std::vector<Square*> *dims;
 	Node *right;
-	std::string name;
+	std::string name,op;
 	void set_name(std::string name){
 		this->name = name;
+	}
+	void set_op(std::string op){
+		this->op = op;
 	}
 	void set_dims(std::vector<Square*> *dims){
 		this->dims = dims;
@@ -377,13 +392,18 @@ private:
 
 class Assign: public AssignPar{
 public:
-	Assign(std::string name, Node *right){
+	Assign(std::string name, std::string op, Node *right){
 		set_name(name);
+		set_op(op);
 		set_right(right);
 	}
 	std::string get_name(){
 		return this->name;
 	}
+	std::string get_op(){
+		return this->op;
+	}
+	
 	Node *get_right(){
 		return this->right;
 	}
@@ -393,10 +413,14 @@ public:
 	~Assign(){}
 private:
 	Node *right;
-	std::string name;
+	std::string name,op;
 	void set_name(std::string name){
 		this->name = name;
 	}
+	void set_op(std::string op){
+		this->op = op;
+	}
+	
 	void set_right(Node *right){
 		this->right = right;
 	}
@@ -568,7 +592,6 @@ public:
 private:
 	std::string name;
 	std::vector<Arg*> *args;
-
 	void set_name(std::string name){
 		this->name = name;
 	}
@@ -666,7 +689,6 @@ private:
 		this->import = import;
 	}
 };
-
 
 class VarDec: public ProgramNode, public Statement{
 public:

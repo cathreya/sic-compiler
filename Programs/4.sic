@@ -1,9 +1,9 @@
 import "io.sic";
 import "stdlib.sic";
 
-char[] author = "Saujas Vaduguru, 20171098";
+char[1000] author = "Saujas Vaduguru, 20171098";
 
-void intToStr(int k, char[] num){
+void intToStr(int k, char[1000] num){
     bool nonneg; nonneg = k >= 0; 
     char[20] revnum;
     if (!nonneg) {

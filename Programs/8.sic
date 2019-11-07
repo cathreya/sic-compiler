@@ -1,7 +1,7 @@
 import "io.sic";
 import "stdlib.sic";
 
-char[] author = "Saujas Vaduguru, 20171098";
+char[1000] author = "Saujas Vaduguru, 20171098";
 
 int readInt(){
     char[20] num;
@@ -17,7 +17,7 @@ int readInt(){
     return toInt(num);
 }
 
-void intToStr(int k, char[] num){
+void intToStr(int k, char[1000] num){
     bool nonneg; nonneg = k >= 0; 
     char[20] revnum;
     if (!nonneg) {
@@ -46,7 +46,7 @@ void intToStr(int k, char[] num){
     num[j] = '\0';
 }
 
-void merge(int[] a, int start, int end, int halfway)
+void merge(int[1000] a, int start, int end, int halfway)
 {
 	int i; int j; int k;
 
@@ -106,7 +106,7 @@ void merge(int[] a, int start, int end, int halfway)
 	}
 }
 
-void msort(int[] a, int start, int end)
+void msort(int[1000] a, int start, int end)
 {
 	if (end - start == 0) {
 		return;
