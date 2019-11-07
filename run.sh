@@ -1,3 +1,3 @@
-bison -d parser.y
-flex scanner.l
-g++ lex.yy.c parser.tab.c -lfl -o parse
+bison -d parser.yy &&
+flex scanner.ll &&
+g++ lex.yy.c parser.tab.cc printVisitorMain.cpp printVisitor.cpp -o prettify
