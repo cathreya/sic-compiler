@@ -1,4 +1,4 @@
-#include "visitor.h"
+#include "visitor.hh"
 // #include "ast.h"
 #include <iostream>
 
@@ -88,5 +88,8 @@ void Visitor::visit(Imports* visitee){
 	std::cout<<"Ok"<<std::endl;
 }
 void Visitor::visit(StartNode* visitee){
+	std::cout<<"Ok"<<std::endl;
+}
+void Visitor::visit(ParenExp* visitee){
 	std::cout<<"Ok"<<std::endl;
 }

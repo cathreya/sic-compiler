@@ -264,6 +264,9 @@ static void yy_flex_free YY_PROTO(( void * ));
 
 #define YY_AT_BOL() (yy_current_buffer->yy_at_bol)
 
+
+#define yywrap() 1
+#define YY_SKIP_YYWRAP
 typedef unsigned char YY_CHAR;
 FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;
 typedef int yy_state_type;
@@ -441,20 +444,20 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "scanner.l"
+#line 1 "scanner.ll"
 #define INITIAL 0
-#line 2 "scanner.l"
-#include <string.h>
-#include <stdlib.h>
-#include <cstdio>
-#include <iostream>
-using namespace std;
-#include "parser.tab.h"
-#include "ast.h"
-int lineno = 0;
-extern int yylex();
-
-#line 458 "lex.yy.c"
+#line 3 "scanner.ll"
+	#include <string.h>
+	#include <stdlib.h>
+	#include <cstdio>
+	#include <iostream>
+	#include <vector>
+	#include "visitor.hh"
+	#include "ast.hh"
+	#include "parser.tab.hh"
+	int linenumm = 0;
+	extern int yylex();
+#line 461 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -616,9 +619,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 14 "scanner.l"
+#line 15 "scanner.ll"
 
-#line 622 "lex.yy.c"
+#line 625 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -703,313 +706,313 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 15 "scanner.l"
+#line 16 "scanner.ll"
 { /* eat white spaces */  }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 16 "scanner.l"
+#line 17 "scanner.ll"
 {
 	//consume the comment
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 19 "scanner.l"
+#line 20 "scanner.ll"
 {
-	cout<<lineno<<" found a LIST_SEP;"<<endl;
+	std::cout<<linenumm<<" found a LIST_SEP;"<<std::endl;
 	return LIST_SEP;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 23 "scanner.l"
+#line 24 "scanner.ll"
 {
-	cout<<lineno<<" found a STMT_SEP;"<<endl;
+	std::cout<<linenumm<<" found a STMT_SEP;"<<std::endl;
 	return STMT_SEP;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 27 "scanner.l"
+#line 28 "scanner.ll"
 {
-	cout<<lineno<<" found a UNARY_OP;"<<endl;
+	std::cout<<linenumm<<" found a UNARY_OP;"<<std::endl;
 	return UNARY_OP;
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 31 "scanner.l"
+#line 32 "scanner.ll"
 {
-	cout<<lineno<<" found a ADD;"<<endl;
+	std::cout<<linenumm<<" found a ADD;"<<std::endl;
 	return ADD;
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 35 "scanner.l"
+#line 36 "scanner.ll"
 {
-	cout<<lineno<<" found a MUL;"<<endl;
+	std::cout<<linenumm<<" found a MUL;"<<std::endl;
 	return MUL;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 39 "scanner.l"
+#line 40 "scanner.ll"
 {
-	cout<<lineno<<" found a REL;"<<endl;
+	std::cout<<linenumm<<" found a REL;"<<std::endl;
 	return REL;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 43 "scanner.l"
+#line 44 "scanner.ll"
 {
-	cout<<lineno<<" found a EQ;"<<endl;
+	std::cout<<linenumm<<" found a EQ;"<<std::endl;
 	return EQ;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 47 "scanner.l"
+#line 48 "scanner.ll"
 {
-	cout<<lineno<<" found a AND;"<<endl;
+	std::cout<<linenumm<<" found a AND;"<<std::endl;
 	return AND;
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 51 "scanner.l"
+#line 52 "scanner.ll"
 {
-	cout<<lineno<<" found a OR;"<<endl;
+	std::cout<<linenumm<<" found a OR;"<<std::endl;
 	return OR;
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 55 "scanner.l"
+#line 56 "scanner.ll"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<lineno<<" found a VOIDV;"<<endl;
+	std::cout<<linenumm<<" found a VOIDV;"<<std::endl;
 	return VOIDV;
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 60 "scanner.l"
+#line 61 "scanner.ll"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<lineno<<" found a TYPE;"<<endl;
+	std::cout<<linenumm<<" found a TYPE;"<<std::endl;
 	return TYPE;
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 65 "scanner.l"
+#line 66 "scanner.ll"
 {
-	cout<<lineno<<" found a RETURN;"<<endl;
+	std::cout<<linenumm<<" found a RETURN;"<<std::endl;
 	return RETURN;
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 69 "scanner.l"
+#line 70 "scanner.ll"
 {
-	cout<<lineno<<" found a BREAK;"<<endl;
+	std::cout<<linenumm<<" found a BREAK;"<<std::endl;
 	return BREAK;
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 73 "scanner.l"
+#line 74 "scanner.ll"
 {
-	cout<<lineno<<" found a CONTINUE;"<<endl;
+	std::cout<<linenumm<<" found a CONTINUE;"<<std::endl;
 	return CONTINUE;
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 77 "scanner.l"
+#line 78 "scanner.ll"
 {
-	cout<<lineno<<" found a IF;"<<endl;
+	std::cout<<linenumm<<" found a IF;"<<std::endl;
 	return IF;
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 81 "scanner.l"
+#line 82 "scanner.ll"
 {
-	cout<<lineno<<" found a ELSE;"<<endl;
+	std::cout<<linenumm<<" found a ELSE;"<<std::endl;
 	return ELSE;
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 85 "scanner.l"
+#line 86 "scanner.ll"
 {
-	cout<<lineno<<" found a FOR;"<<endl;
+	std::cout<<linenumm<<" found a FOR;"<<std::endl;
 	return FOR;
 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 89 "scanner.l"
+#line 90 "scanner.ll"
 {
-	cout<<lineno<<" found a WHILE;"<<endl;
+	std::cout<<linenumm<<" found a WHILE;"<<std::endl;
 	return WHILE;
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 93 "scanner.l"
+#line 94 "scanner.ll"
 {
-	cout<<lineno<<" found a IMPORT;"<<endl;
+	std::cout<<linenumm<<" found a IMPORT;"<<std::endl;
 	return IMPORT;
 }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 97 "scanner.l"
+#line 98 "scanner.ll"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<lineno<<" found a BOOLLIT;"<<endl;
+	std::cout<<linenumm<<" found a BOOLLIT;"<<std::endl;
 	return BOOLLIT;
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 102 "scanner.l"
+#line 103 "scanner.ll"
 { 
 	yylval.ival = atoi(yytext); 
-	cout<<lineno<<" found a INTV; "<<yytext<<endl;
+	std::cout<<linenumm<<" found a INTV; "<<yytext<<std::endl;
 	return INTV;
 }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 107 "scanner.l"
+#line 108 "scanner.ll"
 {
 	yylval.ival = atof(yytext); 
-	cout<<lineno<<" found a FLOATV;"<<endl;
+	std::cout<<linenumm<<" found a FLOATV;"<<std::endl;
 	return FLOATV;
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 112 "scanner.l"
+#line 113 "scanner.ll"
 {
 	yylval.sval[0] = yytext[0];
 	yylval.sval[1] = 0;
-	cout<<lineno<<" found a CHARV;"<<endl;
+	std::cout<<linenumm<<" found a CHARV;"<<std::endl;
 	return CHARV;
 }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 118 "scanner.l"
+#line 119 "scanner.ll"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<lineno<<" found a NAME; "<< yytext<<endl;
+	std::cout<<linenumm<<" found a NAME; "<< yytext<<std::endl;
 	return NAME; 
 }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 123 "scanner.l"
+#line 124 "scanner.ll"
 {
-	cout<<lineno<<" found a ASSIGN;"<<endl;
+	std::cout<<linenumm<<" found a ASSIGN;"<<std::endl;
 	return ASSIGN;
 }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 127 "scanner.l"
+#line 128 "scanner.ll"
 {
-	cout<<lineno<<" found a TQ;"<<endl;
+	std::cout<<linenumm<<" found a TQ;"<<std::endl;
 	return TQ;
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 131 "scanner.l"
+#line 132 "scanner.ll"
 {
-	cout<<lineno<<" found a TE;"<<endl;
+	std::cout<<linenumm<<" found a TE;"<<std::endl;
 	return TE;
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 136 "scanner.l"
+#line 137 "scanner.ll"
 {
-	cout<<lineno<<" found a OPENPAREN;"<<endl;
+	std::cout<<linenumm<<" found a OPENPAREN;"<<std::endl;
 	return OPENPAREN;
 }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 140 "scanner.l"
+#line 141 "scanner.ll"
 {
-	cout<<lineno<<" found a CLOSEPAREN;"<<endl;
+	std::cout<<linenumm<<" found a CLOSEPAREN;"<<std::endl;
 	return CLOSEPAREN;
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 144 "scanner.l"
+#line 145 "scanner.ll"
 {
-	cout<<lineno<<" found a OPENBRACE;"<<endl;
+	std::cout<<linenumm<<" found a OPENBRACE;"<<std::endl;
 	return OPENBRACE;
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 148 "scanner.l"
+#line 149 "scanner.ll"
 {
-	cout<<lineno<<" found a CLOSEBRACE;"<<endl;
+	std::cout<<linenumm<<" found a CLOSEBRACE;"<<std::endl;
 	return CLOSEBRACE;
 }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 152 "scanner.l"
+#line 153 "scanner.ll"
 {
-	cout<<lineno<<" found a OPENSQUARE;"<<endl;
+	std::cout<<linenumm<<" found a OPENSQUARE;"<<std::endl;
 	return OPENSQUARE;
 }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 156 "scanner.l"
+#line 157 "scanner.ll"
 {
-	cout<<lineno<<" found a CLOSESQUARE;"<<endl;
+	std::cout<<linenumm<<" found a CLOSESQUARE;"<<std::endl;
 	return CLOSESQUARE;
 }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 160 "scanner.l"
+#line 161 "scanner.ll"
 {
 	strcpy(yylval.sval,yytext);
-	cout<<lineno<<" found a STRINGLIT; "<<yytext<<endl;
+	std::cout<<linenumm<<" found a STRINGLIT; "<<yytext<<std::endl;
 	return STRINGLIT;
 }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 165 "scanner.l"
-{ ++lineno;}
+#line 166 "scanner.ll"
+{ ++linenumm;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 166 "scanner.l"
-{ printf("Line No %d: Unrecognized character '%c'\n", lineno, yytext[0]);}
+#line 167 "scanner.ll"
+{ printf("Line No %d: Unrecognized character '%c'\n", linenumm, yytext[0]);}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 168 "scanner.l"
+#line 169 "scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1013 "lex.yy.c"
+#line 1016 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1899,7 +1902,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 168 "scanner.l"
+#line 169 "scanner.ll"
 
 
 // int main(){
