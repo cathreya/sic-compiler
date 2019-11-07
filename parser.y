@@ -2,6 +2,8 @@
 %{
 	#include <stdio.h>
 	#include <iostream>
+	#include "visitor.h"
+	#include "ast.h"
 	using namespace std;
 
 	// stuff from flex that bison needs to know about:
@@ -14,13 +16,44 @@
 	void status(int rule){
 		cout<<"Reducing using rule "<<rule<<endl;
 	}
-
 %}
 
 %union {
 	int   ival;
 	float fval;
 	char  sval[100];
+	Term *TermVal;
+	Name *NameVal;
+	Float *FloatVal;
+	Int *IntVal;
+	Bool *BoolVal;
+	Char *CharVal;
+	MultiDimArr *MultiDimArrVal;
+	UnaryTerm *UnaryTermVal;
+	Exp *ExpVal;
+	BinaryOperator *BinaryOperatorVal;
+	TernaryOperator *TernaryOperatorVal;
+	std::vector<Square*> *SquareVal;
+	FuncCall *FuncCallVal;
+	String *StringVal;
+	std::vector<Arg*> *ArgVal;
+	IfStmt *IfStmtVal;
+	For *ForVal;
+	While *WhileVal;
+	AssignPar *AssignParVal;
+	ArrayAssign *ArrayAssignVal;
+	Assign *AssignVal;
+	Break *BreakVal;
+	Continue *ContinueVal;
+	Return *ReturnVal;
+	Statement *StatementVal;
+	std::vector<Statement*> *StatementListVal;
+	std::vector<Param*> *ParamVal;
+	FuncDef *FuncDefVal;
+	std::vector<ProgramNode*> *ProgramNodeVal;
+	ProgramNode *SProgramNodeVal;
+	std::vector<Imports*> *ImportsVal;
+	StartNode *StartNodeVal;
 }
 
 %token  <ival> DIGIT 
@@ -59,118 +92,153 @@
 %token  <sval> TQ
 %token  <sval> TE
 
-
+%type <StartNodeVal> start
+%type <ImportsVal> imports
+%type <SProgramNodeVal> prog_element
+%type <ProgramNodeVal> program
+%type <VarDecVal> declaration
+%type <FuncDefVal> function_definition
+%type <ParamVal> parameters
+%type <StatementVal> statement_block
+%type <StatementListVal> statement_list
+%type <StatementVal> statementsc
+%type <StatementVal> statementcurly
+%type <AssignParVal> assignment_statement
+%type <Square> multidim
+%type <FuncCallVal> function_call
+%type <ArgVal> arguments
+%type <IfStmtVal> if_block
+%type <WhileVal> while_block
+%type <ForVal> for_block
+%type <ExpVal> texp
+%type <ExpVal> or_exp
+%type <ExpVal> and_exp
+%type <ExpVal> eq_exp
+%type <ExpVal> rel_exp
+%type <ExpVal> add_exp
+%type <ExpVal> mul_exp
+%type <ExpVal> exp
+%type <TermVal> term
+%type <StringVal> string
 
 %%
 start : imports program { 
+	$$ = new StartNode($1,$2);
 	cout << "Parse successful!" << endl; 
 }
 | program { 
-		cout << "Parse successful!" << endl;
+	$$ = $1;
+	cout << "Parse successful!" << endl;
 }
 
-imports : IMPORT STRINGLIT STMT_SEP {status(1);};
-| imports IMPORT STRINGLIT STMT_SEP {status(2);};
+imports : IMPORT string STMT_SEP {$$ = new std::vector<Imports*> {Imports(std::string($2))};}
+| imports IMPORT string STMT_SEP {$1->push_back(Imports($3)); $$ = $1;}
 
-prog_element : declaration STMT_SEP {status(3);};
-| function_definition {status(4);};
+prog_element : declaration STMT_SEP {$$ = $1;}
+| function_definition {$$ = $1;}
 
-program : prog_element program {status(5);};
-| prog_element {status(6);};
+program : program prog_element {$1->push_back(ProgramNode($2)); $$ = $1;}
+| prog_element {$$ = new std::vector<ProgramNode*> {ProgramNode($1)};}
 
-declaration : TYPE NAME ASSIGN STRINGLIT {status(7);};
-| TYPE NAME  {status(77);};
-| TYPE NAME ASSIGN texp  {status(12);};
+declaration : TYPE NAME ASSIGN string {$$ = new VarDec(std::string($1), NULL, std::string($2), $4);}
+| TYPE NAME  {$$ = new VarDec(std::string($1), NULL, std::string($2), NULL);}
+| TYPE NAME ASSIGN texp  {$$ = new VarDec(std::string($1), NULL, std::string($2), $4);}
+| TYPE multidim NAME  {$$ = new VarDec(std::string($1), $2, std::string($3), NULL);}
 
-function_definition : TYPE NAME OPENPAREN parameters CLOSEPAREN statement_block {status(13);};
-| TYPE NAME OPENPAREN CLOSEPAREN statement_block {status(14);};
-| VOIDV NAME OPENPAREN CLOSEPAREN statement_block {status(15);};
-| VOIDV NAME OPENPAREN parameters CLOSEPAREN statement_block {status(16);};
+function_definition : TYPE NAME OPENPAREN parameters CLOSEPAREN statement_block {$$ = new FuncDef(std::string($1),std::string($2),$4,$6);}
+| TYPE NAME OPENPAREN CLOSEPAREN statement_block {$$ = new FuncDef(std::string($1),std::string($2),NULL,$5);}
+| VOIDV NAME OPENPAREN CLOSEPAREN statement_block {$$ = new FuncDef(std::string($1),std::string($2),NULL,$5);}
+| VOIDV NAME OPENPAREN parameters CLOSEPAREN statement_block {$$ = new FuncDef(std::string($1),std::string($2),$4,$6);};
 
-parameters : TYPE NAME {status(17);};
-| parameters LIST_SEP TYPE NAME {status(18);};
+parameters : TYPE NAME {$$ = new vector<Param*> {Param(std::string($1), NULL, std::string($2))};}
+| TYPE multidim NAME {$$ = new vector<Param*> {Param(std::string($1), $2, std::string($3))};}
+| parameters LIST_SEP TYPE NAME {$1->push_back(Param(std::string($3), NULL, std::string($4))); $$ = $1;}
+| parameters LIST_SEP TYPE multidim NAME {$1->push_back(Param(std::string($3), $4, std::string($5))); $$ = $1;}
 
-statement_block : OPENBRACE statement_list CLOSEBRACE {status(19);};
+statement_block : OPENBRACE statement_list CLOSEBRACE {$$ = $1;}
 
 
-statement_list : statementsc STMT_SEP {status(20);};
-| statementcurly {status(21);};
-| statement_list statementsc STMT_SEP {status(21);};
-| statement_list statementcurly {status(21);};
+statement_list : statementsc STMT_SEP {$$ = new std::vector<Statement*> {$1};}
+| statementcurly {$$ = new std::vector<Statement*> {$1};}
+| statement_list statementsc STMT_SEP {$1->push_back($2); $$ = $1;}
+| statement_list statementcurly {$1->push_back($2); $$ = $1;;}
 
-statementsc : declaration {status(22);};
-| assignment_statement {status(23);};
-| function_call {status(24);};
-| BREAK {status(25);};
-| CONTINUE {status(26);};
-| RETURN {status(27);};
-| RETURN texp {status(277);};
+statementsc : declaration {$$ = $1;}
+| assignment_statement {$$ = $1;}
+| function_call {$$ = $1;}
+| BREAK {$$ = new Break();}
+| CONTINUE {$$ = new Continue();}
+| RETURN {$$ = new Return(NULL);}
+| RETURN texp {$$ = new Return($2);}
+| RETURN string {$$ = new Return($2);}
 
-statementcurly : if_block {status(28);};
-| while_block {status(29);};
-| for_block {status(30);};
+statementcurly : if_block {$$ = $1;}
+| while_block {$$ = $1;}
+| for_block {$$ = $1;}
 
-assignment_statement : NAME ASSIGN texp {status(31);};
-| NAME multidim ASSIGN texp {status(32);};
+assignment_statement : NAME ASSIGN texp {$$ = new Assign(std::string($1),$3);}
+| NAME multidim ASSIGN texp {$$ = new ArrayAssign(std::string($1),$2,$4);}
 
-multidim : OPENSQUARE texp CLOSESQUARE {status(322);};
-| multidim OPENSQUARE texp CLOSESQUARE {status(323);};
+multidim : OPENSQUARE texp CLOSESQUARE {$$ = new std::vector<Square*> {Square($2)};}
+| multidim OPENSQUARE texp CLOSESQUARE {$1->push_back(Square($3)); $$ = $1;}
 
-function_call : NAME OPENPAREN arguments CLOSEPAREN {status(33);};
-| NAME OPENPAREN CLOSEPAREN {status(34);};
+function_call : NAME OPENPAREN arguments CLOSEPAREN {$$ = new FuncCall(std::string($1),$3);}
+| NAME OPENPAREN CLOSEPAREN {$$ = new FuncCall(std::string($1), NULL);}
 
-arguments : texp {status(35);};
-| STRINGLIT {status(355);};
-| arguments LIST_SEP texp {status(36);};
-| arguments LIST_SEP STRINGLIT {status(366);};
+arguments : texp {$$ = new std::vector<Arg*> {Arg($1)};}
+| string {$$ = new std::vector<Arg*> {Arg($1)};}
+| arguments LIST_SEP texp {$1->push_back($3); $$ = $1;}
+| arguments LIST_SEP string {$1->push_back($3); $$ = $1;}
 
-if_block : IF OPENPAREN texp CLOSEPAREN statement_block {status(37);};
-| IF OPENPAREN texp CLOSEPAREN statement_block ELSE statement_block {status(38);};
+if_block : IF OPENPAREN texp CLOSEPAREN statement_block {$$ = new IfStmt($3,$5,NULL);}
+| IF OPENPAREN texp CLOSEPAREN statement_block ELSE statement_block {$$ = new IfStmt($3,$5,$7);}
 
-while_block : WHILE OPENPAREN texp CLOSEPAREN statement_block {status(39);};
+while_block : WHILE OPENPAREN texp CLOSEPAREN statement_block {$$ = new While($3, $5);}
 
-for_block : FOR OPENPAREN STMT_SEP STMT_SEP CLOSEPAREN statement_block {status(40);};
-| FOR OPENPAREN STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {status(41);};
-| FOR OPENPAREN STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {status(42);};
-| FOR OPENPAREN STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {status(43);};
-| FOR OPENPAREN statementsc STMT_SEP STMT_SEP CLOSEPAREN statement_block {status(44);};
-| FOR OPENPAREN statementsc STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {status(45);};
-| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {status(46);};
-| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {status(47);};
+for_block : FOR OPENPAREN STMT_SEP STMT_SEP CLOSEPAREN statement_block {$$ = new For(NULL, NULL, NULL, $6);}
+| FOR OPENPAREN STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {$$ = new For(NULL,NULL,$5,$7);}
+| FOR OPENPAREN STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {$$ = new For(NULL,$4,NULL,$7);}
+| FOR OPENPAREN STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {$$ = new For(NULL,$4,$6,$8);}
+| FOR OPENPAREN statementsc STMT_SEP STMT_SEP CLOSEPAREN statement_block {$$ = new For($3,NULL,NULL,$7);}
+| FOR OPENPAREN statementsc STMT_SEP STMT_SEP statementsc CLOSEPAREN statement_block {$$ = new For($3, NULL, $6, $8);}
+| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP CLOSEPAREN statement_block {$$ = new For($3, $5, NULL, $8);}
+| FOR OPENPAREN statementsc STMT_SEP texp STMT_SEP statementsc CLOSEPAREN statement_block {$$ = new For($3, $5, $7, $9);}
 
-texp : or_exp {status(48);};
-| or_exp TQ texp TE or_exp
+texp : or_exp {$$ = $1;}
+| or_exp TQ texp TE or_exp {$$ = TernaryOperator($1,$2,$3);}
 
-or_exp : and_exp {status(49);};
-| or_exp OR and_exp {status(50);};
+or_exp : and_exp {$$ = $1;}
+| or_exp OR and_exp {$$ = new BinaryOperator(std::string($2),$1,$2);}
 
-and_exp : eq_exp {status(51);};
-| and_exp AND eq_exp {status(52);};
+and_exp : eq_exp {$$ = $1;}
+| and_exp AND eq_exp {$$ = new BinaryOperator(std::string($2),$1,$2);}
 
-eq_exp : rel_exp;
-| eq_exp EQ rel_exp {status(53);};
+eq_exp : rel_exp {$$ = $1};
+| eq_exp EQ rel_exp {$$ = new BinaryOperator(std::string($2),$1,$2);}
 
-rel_exp : add_exp {status(54);};
-| rel_exp REL add_exp {status(55);};
+rel_exp : add_exp {$$ = $1;}
+| rel_exp REL add_exp {$$ = new BinaryOperator(std::string($2),$1,$2);}
 
-add_exp : mul_exp {status(56);};
-| add_exp ADD mul_exp {status(57);;} 
+add_exp : mul_exp {$$ = $1;}
+| add_exp ADD mul_exp {$$ = new BinaryOperator(std::string($2),$1,$2);} 
 
-mul_exp : exp {status(58);};
-| mul_exp MUL exp {status(59);};
+mul_exp : exp {$$ = $1;}
+| mul_exp MUL exp {$$ = new BinaryOperator(std::string($2),$1,$2);}
 
-exp : term {status(60);};
-| UNARY_OP term {status(61);};
-| ADD term {status(62);};
+exp : term {$$ = $1;}
+| UNARY_OP term {$$ = new UnaryTerm($1,$2);}
+| ADD term {$$ = new UnaryTerm($1,$2);}
 
-term : NAME {status(63);};
-| FLOATV  {status(64);};
-| INTV  {status(65);};
-| BOOLLIT  {status(66);};
-| CHARV  {status(67);};
-| OPENPAREN texp CLOSEPAREN {status(68);};
-| NAME multidim {status(69);};
-| function_call {status(70);};
+term : NAME {$$ = new Name($1);}
+| FLOATV  {$$ = new Float($1);}
+| INTV  {$$ = new Int($1);}
+| BOOLLIT  {$$ = new Bool($1);}
+| CHARV  {$$ = new Char($1);}
+| OPENPAREN texp CLOSEPAREN {$$ = $2;}
+| NAME multidim {$$ = new MultiDimArr(std::string($1),$2);}
+| function_call { $$ = $1;}
+
+string : STRINGLIT {$$ = new String(std::string($1));}
 
 %%
 

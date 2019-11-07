@@ -5,6 +5,7 @@
 #include <iostream>
 using namespace std;
 #include "parser.tab.h"
+#include "ast.h"
 int lineno = 0;
 extern int yylex();
 
@@ -52,10 +53,11 @@ extern int yylex();
 	return OR;
 }
 "void" {
+	strcpy(yylval.sval,yytext);
 	cout<<lineno<<" found a VOIDV;"<<endl;
 	return VOIDV;
 }
-("uint"|"int"|"float"|"char"|"file"|"bool")("["[0-9]*"]")* {
+("uint"|"int"|"float"|"char"|"file"|"bool") {
 	strcpy(yylval.sval,yytext);
 	cout<<lineno<<" found a TYPE;"<<endl;
 	return TYPE;

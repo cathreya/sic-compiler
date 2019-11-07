@@ -88,13 +88,45 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 20 "parser.y" /* yacc.c:1909  */
+#line 21 "parser.y" /* yacc.c:1909  */
 
 	int   ival;
 	float fval;
 	char  sval[100];
+	Term *TermVal;
+	Name *NameVal;
+	Float *FloatVal;
+	Int *IntVal;
+	Bool *BoolVal;
+	Char *CharVal;
+	MultiDimArr *MultiDimArrVal;
+	UnaryTerm *UnaryTermVal;
+	Exp *ExpVal;
+	BinaryOperator *BinaryOperatorVal;
+	TernaryOperator *TernaryOperatorVal;
+	std::vector<Square*> *SquareVal;
+	FuncCall *FuncCallVal;
+	String *StringVal;
+	std::vector<Arg*> *ArgVal;
+	IfStmt *IfStmtVal;
+	For *ForVal;
+	While *WhileVal;
+	AssignPar *AssignParVal;
+	ArrayAssign *ArrayAssignVal;
+	Assign *AssignVal;
+	Break *BreakVal;
+	Continue *ContinueVal;
+	Return *ReturnVal;
+	Statement *StatementVal;
+	std::vector<Statement*> *StatementListVal;
+	std::vector<Param*> *ParamVal;
+	FuncDef *FuncDefVal;
+	std::vector<ProgramNode*> *ProgramNodeVal;
+	ProgramNode *SProgramNodeVal;
+	std::vector<Imports*> *ImportsVal;
+	StartNode *StartNodeVal;
 
-#line 98 "parser.tab.h" /* yacc.c:1909  */
+#line 130 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
