@@ -600,6 +600,46 @@ private:
 	}
 };
 
+class Read: public Statement{
+public:
+	Read(std::string var){
+		set_var(var);
+	}
+	std::string get_var(){
+		return this->var;
+	}
+	void accept(Visitor *v){
+		v->visit(this);
+	}
+	~Read(){}
+private:
+	std::string var;
+	void set_var(std::string var){
+		this->var = var;
+	}
+};
+
+class Print: public Statement{
+public:
+	Print(Node *arg){
+		set_arg(arg);
+	}
+	Node *get_arg(){
+		return this->arg;
+	}
+	void accept(Visitor *v){
+		v->visit(this);
+	}
+	~Print(){}
+private:
+	Node *arg;
+	void set_arg(Node *arg){
+		this->arg = arg;
+	}
+};
+
+
+
 
 class Arg: public Statement{
 public:

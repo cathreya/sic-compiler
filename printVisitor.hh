@@ -146,6 +146,24 @@ public:
 			tabs();
 		}
 	}
+	void visit(Read* node){
+
+		std::cout<<"read("<<node->get_var()<<")";
+		if(node->get_sc()){
+			std::cout<<";";
+			tabs();
+		}
+	}
+	void visit(Print* node){
+
+		std::cout<<"print(";
+		node->get_arg()->accept(this);
+		std::cout<<")";
+		if(node->get_sc()){
+			std::cout<<";";
+			tabs();
+		}
+	}
 	void visit(String* node){
 		
 		// std::cout<<"String"<<std::endl;

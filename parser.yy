@@ -13,13 +13,13 @@
 	extern StartNode *root;
 
 	void yyerror(char const *s);
+	
 	int production = 1;
 
 	void status(int rule){
 		std::cout<<"Reducing using rule "<<rule<<std::endl;
 	}
 %}
-
 %union {
 	int   ival;
 	float fval;
@@ -54,14 +54,19 @@
 	FuncDef *FuncDefVal;
 	std::vector<ProgramNode*> *ProgramNodeVal;
 	ProgramNode *SProgramNodeVal;
-	std::vector<Imports*> *ImportsVal;
 	StartNode *StartNodeVal;
 	VarDec *VarDecVal;
 	ParenExp *ParenExpVal;
+	Read *ReadVal;
+	Print *PrintVal;
+    std::vector<Imports*> *ImportsVal;
+
 }
 
+%token  <sval> PRINT 
+%token  <sval> IMPORT 
+%token  <sval> READ 
 %token  <ival> DIGIT 
-%token  <sval> IMPORT
 %token  <sval> STRINGLIT
 %token  <sval> STMT_SEP
 %token  <sval> LIST_SEP
@@ -97,7 +102,6 @@
 %token  <sval> TE
 
 %type <StartNodeVal> start
-%type <ImportsVal> imports
 %type <SProgramNodeVal> prog_element
 %type <ProgramNodeVal> program
 %type <VarDecVal> declaration
@@ -124,6 +128,9 @@
 %type <ExpVal> exp
 %type <TermVal> term
 %type <StringVal> string
+%type <ReadVal> read
+%type <PrintVal> print
+%type <ImportsVal> imports
 
 %%
 start : imports program { 
@@ -139,6 +146,7 @@ start : imports program {
 
 imports : IMPORT string STMT_SEP {$$ = new std::vector<Imports*> ({new Imports($2)});}
 | imports IMPORT string STMT_SEP {$1->push_back(new Imports($3)); $$ = $1;}
+
 
 prog_element : declaration STMT_SEP {$1->set_sc(1); $$ = $1;}
 | function_definition {$$ = $1;}
@@ -164,7 +172,6 @@ parameters : TYPE NAME {$$ = new std::vector<Param*> ({new Param(std::string($1)
 
 statement_block : OPENBRACE statement_list CLOSEBRACE {$$ = $2;}
 
-
 statement_list : statementsc STMT_SEP {$$ = new std::vector<Statement*> ({$1});}
 | statementcurly {$$ = new std::vector<Statement*> ({$1});}
 | statement_list statementsc STMT_SEP {$1->push_back($2); $$ = $1;}
@@ -173,6 +180,8 @@ statement_list : statementsc STMT_SEP {$$ = new std::vector<Statement*> ({$1});}
 statementsc : declaration {$1->set_sc(1); $$ = $1;}
 | assignment_statement {$1->set_sc(1); $$ = $1;}
 | function_call {$1->set_sc(1); $$ = $1;}
+| read {$1->set_sc(1); $$ = $1;}
+| print {$1->set_sc(1); $$ = $1;}
 | BREAK {$$ = new Break(); $$->set_sc(1);}
 | CONTINUE {$$ = new Continue(); $$->set_sc(1);}
 | RETURN {$$ = new Return(NULL); $$->set_sc(1);}
@@ -191,6 +200,12 @@ multidim : OPENSQUARE texp CLOSESQUARE {$$ = new std::vector<Square*> ({new Squa
 
 function_call : NAME OPENPAREN arguments CLOSEPAREN {$$ = new FuncCall(std::string($1),$3);}
 | NAME OPENPAREN CLOSEPAREN {$$ = new FuncCall(std::string($1), NULL);}
+
+read : READ OPENPAREN NAME CLOSEPAREN {$$ = new Read(std::string($3));}
+
+print : PRINT OPENPAREN string CLOSEPAREN {$$ = new Print($3);}
+| PRINT OPENPAREN texp CLOSEPAREN {$$ = new Print($3);}
+
 
 arguments : texp {$$ = new std::vector<Arg*> ({new Arg($1)});}
 | string {$$ = new std::vector<Arg*> ({new Arg($1)});}
@@ -233,8 +248,8 @@ mul_exp : exp {$$ = $1;}
 | mul_exp MUL exp {$$ = new BinaryOperator(std::string($2),$1,$3);}
 
 exp : term {$$ = $1;}
-| UNARY_OP term {$$ = new UnaryTerm($1,$2);}
-| ADD term {$$ = new UnaryTerm($1,$2);}
+| UNARY_OP term {$$ = new UnaryTerm(std::string($1),$2);}
+| ADD term {$$ = new UnaryTerm(std::string($1),$2);}
 
 term : NAME {$$ = new Name($1);}
 | FLOATV  {$$ = new Float($1);}
@@ -249,11 +264,9 @@ string : STRINGLIT {$$ = new String(std::string($1));}
 
 %%
 
-void yyerror(char const *s)
-{
-				fprintf(stderr, "error: %s\n", s);
+void yyerror(char const *s){
+	fprintf (stderr, "%s\n", s);
 }
-
 
 // main(int argc, char **argv)
 // {

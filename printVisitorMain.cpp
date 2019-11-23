@@ -2,7 +2,7 @@
 #include "ast.hh"
 #include "parser.tab.hh"
 #include "visitor.hh"
-#include "printVisitor.cpp"
+#include "printVisitor.hh"
 
 StartNode *root;
 

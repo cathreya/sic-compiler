@@ -34,6 +34,8 @@ class ProgramNode;
 class Imports;
 class StartNode;
 class ParenExp;
+class Read;
+class Print; 
 
 class Visitor{
 public:
@@ -68,6 +70,8 @@ public:
 	virtual void visit(Param* visitee) = 0;
 	virtual void visit(FuncDef* visitee) = 0;
 	virtual void visit(VarDec* visitee) = 0;
+	virtual void visit(Read* visitee) = 0;
+	virtual void visit(Print* visitee) = 0;
 	virtual void visit(Imports* visitee) = 0;
 	virtual void visit(StartNode* visitee) = 0;
 	virtual void visit(ParenExp* visitee) = 0;

@@ -70,6 +70,15 @@
 	//std::cout<<linenumm<<" found a TYPE;"<<std::endl;
 	return TYPE;
 }
+print {
+	return PRINT;
+}
+read {
+	return READ;
+}
+import {
+	return IMPORT;
+}
 return {
 	//std::cout<<linenumm<<" found a RETURN;"<<std::endl;
 	return RETURN;
@@ -97,10 +106,6 @@ for {
 while {
 	//std::cout<<linenumm<<" found a WHILE;"<<std::endl;
 	return WHILE;
-}
-import {
-	//std::cout<<linenumm<<" found a IMPORT;"<<std::endl;
-	return IMPORT;
 }
 "true"|"false" {
 	strcpy(yylval.sval,yytext);
