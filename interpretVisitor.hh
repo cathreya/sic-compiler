@@ -1075,20 +1075,91 @@ public:
 		if(node->get_right() != NULL){
 			node->get_right()->accept(this);
 		}
-		if(cur.iar != NULL && this->exp->ival != NULL){
-			(*(this->symbol_table.top()[node->get_name()].iar))[index] = *(this->exp->ival);
+		// if(cur.iar != NULL && this->exp->ival != NULL){
+		// 	(*(this->symbol_table.top()[node->get_name()].iar))[index] = *(this->exp->ival);
+		// }
+		// else if(cur.far != NULL && this->exp->fval != NULL){
+		// 	(*(this->symbol_table.top()[node->get_name()].far))[index] = *(this->exp->fval);
+		// }
+		// else if(cur.bar != NULL && this->exp->bval != NULL){
+		// 	(*(this->symbol_table.top()[node->get_name()].bar))[index] = *(this->exp->bval);
+		// }
+		// else if(cur.sval != NULL && this->exp->cval != NULL){
+		// 	(*(this->symbol_table.top()[node->get_name()].sval))[index] = *(this->exp->cval);
+		// }	
+		// else{
+		// 	error("Invalid Array Assignment");
+		// }
+		std::string op = node->get_op();
+
+		if (op ==  "="){
+			if(cur.iar != NULL && this->exp->ival != NULL){
+				(*(this->symbol_table.top()[node->get_name()].iar))[index] = *(this->exp->ival);
+			}
+			else if(cur.far != NULL && this->exp->fval != NULL){
+				(*(this->symbol_table.top()[node->get_name()].far))[index] = *(this->exp->fval);
+			}
+			else if(cur.bar != NULL && this->exp->bval != NULL){
+				(*(this->symbol_table.top()[node->get_name()].bar))[index] = *(this->exp->bval);
+			}
+			else if(cur.sval != NULL && this->exp->cval != NULL){
+				(*(this->symbol_table.top()[node->get_name()].sval))[index] = *(this->exp->cval);
+			}
+			else{
+				error("Invalid Assignment");
+			}
 		}
-		else if(cur.far != NULL && this->exp->fval != NULL){
-			(*(this->symbol_table.top()[node->get_name()].far))[index] = *(this->exp->fval);
+		if (op ==  "+="){
+			if(cur.iar != NULL && this->exp->ival != NULL){
+				(*(this->symbol_table.top()[node->get_name()].iar))[index] += *(this->exp->ival);
+			}
+			else if(cur.far != NULL && this->exp->fval != NULL){
+				(*(this->symbol_table.top()[node->get_name()].far))[index] += *(this->exp->fval);
+			}
+			else{
+				error("Invalid Assignment");
+			}
 		}
-		else if(cur.bar != NULL && this->exp->bval != NULL){
-			(*(this->symbol_table.top()[node->get_name()].bar))[index] = *(this->exp->bval);
+		if (op ==  "-="){
+			if(cur.iar != NULL && this->exp->ival != NULL){
+				(*(this->symbol_table.top()[node->get_name()].iar))[index] -= *(this->exp->ival);
+			}
+			else if(cur.far != NULL && this->exp->fval != NULL){
+				(*(this->symbol_table.top()[node->get_name()].far))[index] -= *(this->exp->fval);
+			}
+			else{
+				error("Invalid Assignment");
+			}
 		}
-		else if(cur.sval != NULL && this->exp->cval != NULL){
-			(*(this->symbol_table.top()[node->get_name()].sval))[index] = *(this->exp->cval);
-		}	
-		else{
-			error("Invalid Array Assignment");
+		if (op ==  "*="){
+			if(cur.iar != NULL && this->exp->ival != NULL){
+				(*(this->symbol_table.top()[node->get_name()].iar))[index] *= *(this->exp->ival);
+			}
+			else if(cur.far != NULL && this->exp->fval != NULL){
+				(*(this->symbol_table.top()[node->get_name()].far))[index] *= *(this->exp->fval);
+			}
+			else{
+				error("Invalid Assignment");
+			}
+		}
+		if (op ==  "/="){
+			if(cur.iar != NULL && this->exp->ival != NULL){
+				(*(this->symbol_table.top()[node->get_name()].iar))[index] /= *(this->exp->ival);
+			}
+			else if(cur.far != NULL && this->exp->fval != NULL){
+				(*(this->symbol_table.top()[node->get_name()].far))[index] /= *(this->exp->fval);
+			}
+			else{
+				error("Invalid Assignment");
+			}
+		}
+		if (op ==  "%="){
+			if(cur.iar != NULL && this->exp->ival != NULL){
+				(*(this->symbol_table.top()[node->get_name()].iar))[index] %= *(this->exp->ival);
+			}
+			else{
+				error("Invalid Assignment");
+			}
 		}
 		
 	}

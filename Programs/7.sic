@@ -1,57 +1,67 @@
 char[1000] author = "Athreya C, 2018121002";
 
+
+
 void util(int[100] a, int n, int dig){
-    int[100] out;
+	int[100] b;
+	int[10] c;
 
-    int[10] count;
+	int i;
+	for(i=0;i<n;i+=1){
+		int d = (a[i]/dig)%10;
+		c[d] += 1;	
+	}
 
-    for(int i=0;i<n;i+=1){
-        count[(a[i]/dig)%10] += 1;
-    }
+	for(i=1;i<10;i+=1){
+		c[i] += c[i-1];
+	}
+	for(i=9;i>0;i-=1){
+		c[i] = c[i-1];
+	}
+	c[0] = 0;
 
-    for(int i=1;i<10;i+=1){
-        count[i] += count[i-1];
-    }
+	for(i=0;i<n;i+=1){
+		int d = (a[i]/dig)%10;
+		b[c[d]] = a[i];
+		c[d] += 1;
+	}
 
-    for(int i=n-1;i>=0;i-=1){
-        out[count[(a[i]/dig)%10] -1] = a[i];
-        count[(a[i]/dig)%10] -= 1;
-    }
-
-    for(i=0;i<n;i+=2){
-        a[i] = out[i];
-    }
+	for(i=0;i<n;i+=1){
+		a[i] = b[i];
+	}
 }
 
 void sort(int[100] a, int n){
-    int mx = 0;
-    for(int i=1;i<n;i+=1){
-        if(a[i] > a[mx]){
-            mx = i;
-        }
-    }
-    mx = a[mx];
-    for(int dig = 1; mx/dig > 0; dig *= 10){
-        util(a,n,dig);
-    }
+	int mx = 0;
+	for(int i=1;i<n;i+=1){
+		if(a[i] > a[mx]){
+			mx = i;
+		}
+	}
+	mx = a[mx];
+	int i = 0;
+	for(i=1;mx;i=i*10){
+		util(a,n,i);
+		mx = mx/10;
+	}
 }
 
 int main(){
-    int n;
-    read(n);
-    int[100] a;
-    for(int i=0;i<n;i+=1){
-        int b;
-        read(b);
-        a[i] = b;
-    }
-    sort(a,n);
+	int n;
+	read(n);
+	int[100] a;
+	for(int i=0;i<n;i+=1){
+		int b;
+		read(b);
+		a[i] = b;
+	}
+	sort(a,n);
 
-    
-    for(int i=0;i<n;i+=1){
-        print(a[i]);
-        print(" ");
-    }
+	
+	for(int i=0;i<n;i+=1){
+		print(a[i]);
+		print(" ");
+	}
 
-    print("\n");
+	print("\n");
 }
