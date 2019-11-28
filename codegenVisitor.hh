@@ -3,15 +3,38 @@
 #include <map>
 #include <stack>
 #include <iostream>
-#include<llvm/IR/Verifier.h>
-#include<llvm/IR/DerivedTypes.h>
-#include<llvm/IR/IRBuilder.h>
-#include<llvm/IR/LLVMContext.h>
-#include<llvm/IR/Module.h>
+
+#include <llvm/IR/Verifier.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IR/LegacyPassManagers.h>
+#include <llvm/IR/IRPrintingPasses.h>
+#include <llvm/AsmParser/Parser.h> 
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/CallingConv.h>
+// #include <llvm/Bitcode/ReaderWriter.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/ExecutionEngine/GenericValue.h>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Pass.h>
+#include <llvm/ADT/SmallVector.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/CallingConv.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/GlobalVariable.h>
+#include <llvm/IR/InlineAsm.h>
+#include <llvm/Support/FormattedStream.h>
+#include <llvm/Support/MathExtras.h>
 
 #ifndef INTERPRET_VISITOR_H
 #define INTERPRET_VISITOR_H
 
+llvm::LLVMContext context;
 
 
 class DataBlock{
@@ -24,16 +47,25 @@ public:
 };
 
 
-class InterpretVisitor: public Visitor{
+class CodegenVisitor: public Visitor{
 public:
-	InterpretVisitor(StartNode* node){
-		llvm::LLVMContext &context = llvm::getGlobalContext();
+	void codeGen() {
+		llvm::BasicBlock *block = llvm::BasicBlock::Create(context, "entry", this->mainFunc, 0);  
+		this->printf_f = printf_prototype(context, module);
+		pushBlock(block);
+		this->visit(start);
+		handleBlock(block);
+		buildPass(block);
+	}
+
+	CodegenVisitor(StartNode* node){
+		this->builder = new llvm::IRBuilder<>(context);
 		this->module = new llvm::Module("main", context);
 		this->start = node;
 		this->module->setTargetTriple("x86_64-pc-linux-gnu"); 
 
-		llvm::FunctionType *ftype = llvm::FunctionType::get(llvm::Type::getVoidTy(llvm::getGlobalContext()), false);
-		this->mainFunc = llvm::Function::Create(ftype, llvm::GlobalValue::ExternalLinkage, "main", module);
+		// llvm::FunctionType *ftype = llvm::FunctionType::get(llvm::Type::getVoidTy(context), false);
+		// this->mainFunc = llvm::Function::Create(ftype, llvm::GlobalValue::ExternalLinkage, "main", module);
 
 	}
 	void visit(StartNode* node){
@@ -46,124 +78,109 @@ public:
 	}
 	void visit(Imports* node){}
 	void visit(FuncDef* node){
-		if(node->get_name() == "main"){
-			this->retType.push("int");
-			for(auto nx:*(node->get_exec())){
-				nx->accept(this);
-				if(this->ret){
-					this->ret = 0;
-					break;
-				}
-			}
+		llvm::Function *func;
+		std::string fn = node->get_name();
+		if(fn == "main"){
+			llvm::FunctionType *ftype = llvm::FunctionType::get(llvm::Type::getInt64Ty(context), false);
+			this->mainFunc = llvm::Function::Create(ftype, llvm::GlobalValue::ExternalLinkage, "main", module);
+			func = this->mainFunc;
 		}
 		else{
-			this->function_table[node->get_name()] = node;
+			llvm::Type * aT ;
+			std::vector<llvm::Type *> argT;
+			if(node->get_params() != NULL){
+				for(auto x:*node->get_params()){
+					if(x->get_type() != "float"){
+						aT = llvm::Type::getInt64Ty(context);
+					}
+					else{
+						error("Floats args not supported yet");
+					}
+					argT.push_back(aT);
+				}
+			}
+			if(node->get_type() == "void"){
+				aT = llvm::Type::getVoidTy(context);
+			}
+			else if(node->get_type() != "float"){
+				aT = llvm::Type::getInt64Ty(context);		
+			}
+			llvm::FunctionType *ft = llvm::FunctionType::get(aT, llvm::makeArrayRef(argT), false);
+			func = llvm::Function::Create(ft, llvm::GlobalValue::InternalLinkage, fn, module);
 		}
-	}
-	void visit(VarDec* node){
-		std::string type = node->get_type();
-		int dim = 1;
-		std::vector<int> dims;
-		if(node->get_mdim() != NULL){
-			for(auto nx:*(node->get_mdim())){
-				nx->accept(this);
-				if(this->exp->ival == NULL){
-					error("Array Size must be integer");
-				}
-				dim *= *(this->exp->ival);
-				dims.push_back(*(this->exp->ival));
-			}
-		}
-		if(type == "int"){
-			if(dim == 1){
-				if(node->get_exp() != NULL){
-					node->get_exp()->accept(this);
-					this->symbol_table.top()[node->get_name()] = data(*(this->exp->ival));
-				}
-				else{
-					this->symbol_table.top()[node->get_name()] = data(0);
-					// std::cout<<"Got Here\n";
-				}
-			}
-			else{
-				if(node->get_exp() != NULL){
-					error("Attempying to assign an Integer Array");
-				}
-				else{
-					this->symbol_table.top()[node->get_name()] = data(0, dim, dims);
-				}
-				
-			}
-		}
-		if(type == "bool"){
-			if(dim == 1){
-				if(node->get_exp() != NULL){
-					node->get_exp()->accept(this);
-					this->symbol_table.top()[node->get_name()] = data(*(this->exp->bval));
-				}
-				else{
-					this->symbol_table.top()[node->get_name()] = data(false);
-					// std::cout<<"Got Here\n";
-				}
-			}
-			else{
-				if(node->get_exp() != NULL){
-					error("Attempying to assign a boolean Array");
-				}
-				else{
-					this->symbol_table.top()[node->get_name()] = data(false, dim, dims);
-				}
-				
+		llvm::BasicBlock *block = llvm::BasicBlock::Create(context, "entry", func, 0);
+		pushBlock(block);
+
+		if(node->get_params() != NULL){
+			llvm::Function::arg_iterator it2 = func->arg_begin();
+			for(auto it = node->get_params()->begin(); it != node->get_params()->end(); it++){
+				llvm::Value *arg = &(*it2);
+ 				std::string name = (*it)->get_name();
+				arg->setName(name);
+				llvm::AllocaInst *allocaInst = new llvm::AllocaInst(llvm::Type::getInt64Ty(context),0, name, topBlock());
+				auto tmp = new llvm::StoreInst(arg, allocaInst, false, topBlock());
+				declareLocals(name, allocaInst);
+				it2++;
 			}
 		}
 		
-		if(type == "float"){
-			if(dim == 1){
-				if(node->get_exp() != NULL){
-					node->get_exp()->accept(this);
-					this->symbol_table.top()[node->get_name()] = data(*(this->exp->fval));
-				}
-				else{
-					this->symbol_table.top()[node->get_name()] = data((float)0.0);
-				}
+		if(node->get_exec() != NULL){
+			traverse(node->get_exec());
+		}
+
+		if(topBlock()->getTerminator() == NULL){ 
+			if(node->get_type() != "void"){
+				llvm::ReturnInst::Create(context, llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true), topBlock());
 			}
-			else{		
-				if(node->get_exp() != NULL){
-					error("Attempting to assign a Float Array");
-				}
-				else{
-					this->symbol_table.top()[node->get_name()] = data((float)0.0, dim, dims);
-				}
+			else {
+				llvm::ReturnInst::Create(context, topBlock());
 			}
 		}
-		if(type == "char"){
+		popBlock();
+		this->returned = func;
+	}
+	void visit(VarDec* node){
+		// std::cout<<"Got Here"<<std::endl;
+		std::string type = node->get_type();
+		int dim = 1;
+		std::vector<int> dims;
+		// if(node->get_mdim() != NULL){
+		// 	for(auto nx:*(node->get_mdim())){
+		// 		nx->accept(this);
+		// 		if(this->exp->ival == NULL){
+		// 			error("Array Size must be integer");
+		// 		}
+		// 		dim *= *(this->exp->ival);
+		// 		dims.push_back(*(this->exp->ival));
+		// 	}
+		// }
+		if(type == "float"){
+			error("Float Not supported yet");
+		}
+		else{
 			if(dim == 1){
+				llvm::AllocaInst *allocaInst = new llvm::AllocaInst(llvm::Type::getInt64Ty(context),0, node->get_name(), topBlock());
 				if(node->get_exp() != NULL){
 					node->get_exp()->accept(this);
-					this->symbol_table.top()[node->get_name()] = data(*(this->exp->cval));
+					llvm::Value * val = static_cast<llvm::Value *> (this->returned);
+					auto tmp = new llvm::StoreInst(val, allocaInst, false, topBlock());
 				}
 				else{
-					this->symbol_table.top()[node->get_name()] = data((char)0);
+					auto tmp = new llvm::StoreInst(llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true), allocaInst, false, topBlock());
 				}
+				declareLocals(node->get_name(), allocaInst);
+				this->returned = allocaInst;
 			}
 			else{
-				if(node->get_exp() != NULL){
-					node->get_exp()->accept(this);
-					if(this->exp->sval == NULL){
-						error("Incorrectly assigning char array");
-					}
-					this->symbol_table.top()[node->get_name()] = data(*(this->exp->sval),dim, dims);
-				}
-				else{
-					this->symbol_table.top()[node->get_name()] = data(std::string(0), dim, dims);
-				}
+				// TODO ARRAY DECL
+				error("Array declared not supported yet");
 			}
 		}
 	}
 
 	void visit(Name* node){
 		auto name = node->get_name();
-		if(isGlobal(name)){
+		if(!isGlobal(name)){
 			error(name+" not declared");
 		}
 		
@@ -178,19 +195,19 @@ public:
 		// TODO FLOAT SUPPORT
 	}
 	void visit(Int* node){
-		
-		llvm::IntegerType *it = llvm::Type::getInt64Ty(llvm::getGlobalContext());
-		this->returned = llvm::ConstantInt::get(it, val, true);
+
+		llvm::IntegerType *it = llvm::Type::getInt64Ty(context);
+		this->returned = llvm::ConstantInt::get(it, node->get_val(), true);
 	}
 	void visit(Bool* node){
 		if(node->get_val() == "true"){
 			
-			llvm::IntegerType *it = llvm::Type::getInt64Ty(llvm::getGlobalContext());
+			llvm::IntegerType *it = llvm::Type::getInt64Ty(context);
 			this->returned = llvm::ConstantInt::get(it, 1, true);
 		}
 		else{
 			
-			llvm::IntegerType *it = llvm::Type::getInt64Ty(llvm::getGlobalContext());
+			llvm::IntegerType *it = llvm::Type::getInt64Ty(context);
 			this->returned = llvm::ConstantInt::get(it, 0, true);
 		}
 	}
@@ -210,36 +227,36 @@ public:
 			c = node->get_val()[0];
 		}
 
-		llvm::IntegerType *it = llvm::Type::getInt64Ty(llvm::getGlobalContext());
-		this->returned = llvm::ConstantInt::get(it, val, true);
+		llvm::IntegerType *it = llvm::Type::getInt64Ty(context);
+		this->returned = llvm::ConstantInt::get(it, node->get_val(), true);
 	}
 	void visit(MultiDimArr* node){
 		
-		if(this->symbol_table.top().count(node->get_name()) == 0){
-			error(node->get_name()+" not declared");
-		}
-		data cur = this->symbol_table.top()[node->get_name()];
-		int prod = 1;
-		for(int i:*(cur.dims)) prod*=i;
-		int index = 0;
-		int i = 0;
-		if(node->get_sq() != NULL){
-			for(auto nx:*(node->get_sq())){
-				if(i > (cur.dims)->size()){
-					error("Too many dimensions");
-				}
-				nx->accept(this);
-				if(this->exp->ival == NULL){
-					error("Array Index must be integer");
-				}
-				if(*(this->exp->ival) >= (*(cur.dims))[i]){
-					error("Out of bound array access");
-				}
-				prod /= (*(cur.dims))[i];
-				index += *(this->exp->ival)*(prod);
-				i++;
-			}
-		}
+		// if(this->symbol_table.top().count(node->get_name()) == 0){
+		// 	error(node->get_name()+" not declared");
+		// }
+		// data cur = this->symbol_table.top()[node->get_name()];
+		// int prod = 1;
+		// for(int i:*(cur.dims)) prod*=i;
+		// int index = 0;
+		// int i = 0;
+		// if(node->get_sq() != NULL){
+		// 	for(auto nx:*(node->get_sq())){
+		// 		if(i > (cur.dims)->size()){
+		// 			error("Too many dimensions");
+		// 		}
+		// 		nx->accept(this);
+		// 		if(this->exp->ival == NULL){
+		// 			error("Array Index must be integer");
+		// 		}
+		// 		if(*(this->exp->ival) >= (*(cur.dims))[i]){
+		// 			error("Out of bound array access");
+		// 		}
+		// 		prod /= (*(cur.dims))[i];
+		// 		index += *(this->exp->ival)*(prod);
+		// 		i++;
+		// 	}
+		// }
 		// TODO: ARRAY ACCESS
 	}
 	void visit(UnaryTerm* node){
@@ -248,7 +265,7 @@ public:
 			node->get_term()->accept(this);
 		}
 		llvm::Value *val = static_cast<llvm::Value *>(this->returned);
-		llvm::ConstantInt *zer = llvm::ConstantInt::get(llvm::Type::getInt64Ty(llvm::getGlobalContext()), 0, true);
+		llvm::ConstantInt *zer = llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true);
 		if(node->get_op() == "-"){
 			this->returned = llvm::BinaryOperator::Create(llvm::Instruction::Sub, zer, val, "tmp", topBlock());
 		}
@@ -257,7 +274,6 @@ public:
 		}
 	}
 	void visit(BinaryOperator* node){
-
 		if(node->get_right() != NULL){
 			node->get_right()->accept(this);
 		}
@@ -290,27 +306,27 @@ public:
 		}
 		if(node->get_op() == "=="){
 			
-			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_EQ, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(llvm::getGlobalContext()), "zext", topBlock());
+			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_EQ, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(context), "zext", topBlock());
 		}
 		if(node->get_op() == ">="){
 			
-			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_SGE, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(llvm::getGlobalContext()), "zext", topBlock());
+			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_SGE, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(context), "zext", topBlock());
 		}
 		if(node->get_op() == ">"){
 			
-			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_SGT, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(llvm::getGlobalContext()), "zext", topBlock());
+			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_SGT, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(context), "zext", topBlock());
 		}
 		if(node->get_op() == "<="){
 			
-			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_SLE, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(llvm::getGlobalContext()), "zext", topBlock());
+			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_SLE, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(context), "zext", topBlock());
 		}
 		if(node->get_op() == "<"){
 			
-			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_SLT, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(llvm::getGlobalContext()), "zext", topBlock());
+			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_SLT, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(context), "zext", topBlock());
 		}
 		if(node->get_op() == "!="){
 			
-			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_NE, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(llvm::getGlobalContext()), "zext", topBlock());
+			this->returned =  new llvm::ZExtInst(llvm::CmpInst::Create(llvm::Instruction::ICmp, llvm::ICmpInst::ICMP_NE, left, right,"tmp", topBlock()), llvm::Type::getInt64Ty(context), "zext", topBlock());
 		}
 		if(node->get_op() == "&"){
 			
@@ -346,92 +362,43 @@ public:
 		}
 	}
 	void visit(FuncCall* node){
-		std::map<std::string, data> ntable;
-		if(this->function_table.count(node->get_name()) == 0){
-			error("Undeclared Function "+node->get_name());
+		std::string fn = node->get_name();
+		llvm::Function *func = module->getFunction(fn);
+		std::vector<llvm::Value*> args;
+		if(func == NULL){
+			error("Undeclared Function "+fn);
 		}
-		FuncDef *func = this->function_table[node->get_name()];
-		if(node->get_args() != NULL && func->get_params() != NULL){
-			if(node->get_args()->size() != func->get_params()->size()){
-				error("func call doesn't match definition");			
+		if(node->get_args() != NULL){
+			for(auto x:*node->get_args()){
+				x->accept(this);
+				llvm::Value *argg = static_cast<llvm::Value*> (this->returned);
+				args.push_back(argg);
 			}
-			for(int i=0;i<node->get_args()->size();i++){
-				Arg *nx = (*(node->get_args()))[i];
-				Param *px = (*(func->get_params()))[i];
-				nx->accept(this);
-				if(this->exp->ival != NULL && px->get_type() == "int"
-				|| this->exp->cval != NULL && px->get_type() == "char"
-				|| this->exp->fval != NULL && px->get_type() == "float"
-				|| this->exp->bval != NULL && px->get_type() == "bool"
-				|| this->exp->iar != NULL && px->get_type() == "int" && px->get_multidim() != NULL
-				|| this->exp->far != NULL && px->get_type() == "float" && px->get_multidim() != NULL
-				|| this->exp->bar != NULL && px->get_type() == "bool" && px->get_multidim() != NULL
-				|| this->exp->sval != NULL && px->get_type() == "char" && px->get_multidim() != NULL){
-					if(ntable.count(px->get_name()) == 1){
-						error("Redeclaration of "+px->get_name());
-					}
-					ntable[px->get_name()] = *this->exp;
-				}
-				else{
-					error("func call doesn't match definition");
-				}	
-			}
+		}
 
-		}
-		else{
-			error("func call doesn't match definition");
-		}
-		this->symbol_table.push(ntable);
-		this->retType.push(func->get_type());
-		for(auto nx:*func->get_exec()){
-			nx->accept(this);
-			if(this->ret){
-				this->ret = 0;
-				break;
-			}
-		}
-		this->symbol_table.pop();
-
+		this->returned = llvm::CallInst::Create(func, llvm::makeArrayRef(args), fn, topBlock());	
 	}
 	void visit(Read* node){
-		if(this->symbol_table.top().count(node->get_var()) == 0){
-			error("Reading undeclared var");
-		}
-		data *rhs = &(this->symbol_table.top()[node->get_var()]);
-		if(rhs->ival != NULL){
-			std::cin>>*(rhs->ival);
-		}
-		if(rhs->fval != NULL){
-			std::cin>>*(rhs->fval);
-		}
-		if(rhs->cval != NULL){
-			std::cin>>*(rhs->cval);
-		}
-		if(rhs->bval != NULL){
-			std::cin>>*(rhs->bval);
-		}
+		
+		node->get_var();
+		
 	}
 	void visit(Print* node){
 
 		node->get_arg()->accept(this);
+		llvm::Value * tmp = static_cast<llvm::Value*>(this->returned);
+		std::string format = "%d\n";
+		std::cerr<<"Got Till Here"<<std::endl;
+		builder->SetInsertPoint(topBlock());
+		llvm::Value *form = builder->CreateGlobalStringPtr(format);
+
+
+		std::vector<llvm::Value *> args;
+		args.push_back(form);
+		args.push_back(tmp);
+
+        this->returned = llvm::CallInst::Create(printf_f, llvm::makeArrayRef(args), "printf", topBlock());
 		
-		
-		if(this->exp->ival != NULL){
-			std::cout<<*(this->exp->ival);
-		}
-		if(this->exp->fval != NULL){
-			std::cout<<*(this->exp->fval);
-		}
-		if(this->exp->cval != NULL){
-			std::cout<<*(this->exp->cval);
-		}
-		if(this->exp->sval != NULL){
-			std::cout<<*(this->exp->sval);
-		// std::cout<<"Ok"<<std::endl;
-		}
-		if(this->exp->bval != NULL){
-			std::cout<<*(this->exp->bval);
-		}
 	}
 	void visit(String* node){
 		
@@ -460,10 +427,7 @@ public:
 			}
 		}
 		lit = lit2;
-		std::vector<int> dims; dims.push_back(lit.size());
 		
-		this->alloced.push_back( data(lit, lit.size(), dims));
-		this->exp = &this->alloced.back();
 		
 	}
 	void visit(Arg* node){
@@ -474,45 +438,59 @@ public:
 	}
 	void visit(IfStmt* node){
 		
+		llvm::BasicBlock *entryBlock = topBlock(); 
+		llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(context, "then", entryBlock->getParent(), 0);
+		llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(context, "else", entryBlock->getParent(), 0);
+		llvm::BasicBlock *after = llvm::BasicBlock::Create(context, "after", entryBlock->getParent(), 0);
 		if(node->get_cond() != NULL){
 			node->get_cond()->accept(this);
 		}
-		data cond = *this->exp;
-		if(cond.ival == NULL && cond.bval == NULL){
-			error("Condition doesn't evaluate to bool");
-		}
-		if(cond.ival != NULL && *(cond.ival) && node->get_if_blk() != NULL){
+		llvm::Value *cond = static_cast<llvm::Value *>(this->returned);
+		llvm::Constant *zero = llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true);
+		llvm::ICmpInst *comparison = new llvm::ICmpInst(*entryBlock, llvm::ICmpInst::ICMP_NE, cond, zero, "tmp");
+		llvm::BranchInst::Create(thenBlock, elseBlock, comparison, entryBlock);
+		
+		pushBlock(thenBlock);
+		if(node->get_if_blk() != NULL){
 			traverse(node->get_if_blk());
 		}
-		else if(cond.ival != NULL && !*(cond.ival) && node->get_else_blk() != NULL){
+		llvm::BranchInst::Create(after, thenBlock);                           
+		popBlock();
+		pushBlock(elseBlock);
+		if(node->get_else_blk() != NULL){
 			traverse(node->get_else_blk());
 		}
-		if(cond.bval != NULL && *(cond.bval) && node->get_if_blk() != NULL){
-			traverse(node->get_if_blk());
-		}
-		else if(cond.bval != NULL && !*(cond.bval) && node->get_else_blk() != NULL){
-			traverse(node->get_else_blk());
-		}
+		llvm::BranchInst::Create(after, elseBlock);                           
+		popBlock();
+		auto locals = getLocals();
+		pushBlock(after);
+		setLocals(locals);
 		
 	}
 	void visit(For* node){
 		
 		llvm::BasicBlock *entryBlock = topBlock(); 
-		llvm::BasicBlock *bodyBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "loop_body", entryBlock->getParent(), 0);
-		llvm::BasicBlock *afterLoopBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "after_loop", entryBlock->getParent(), 0);
-		llvm::BasicBlock *headerBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "loop_header", entryBlock->getParent(), 0);
+		llvm::BasicBlock *bodyBlock = llvm::BasicBlock::Create(context, "loop_body", entryBlock->getParent(), 0);
+		llvm::BasicBlock *afterLoopBlock = llvm::BasicBlock::Create(context, "after_loop", entryBlock->getParent(), 0);
+		llvm::BasicBlock *headerBlock = llvm::BasicBlock::Create(context, "loop_header", entryBlock->getParent(), 0);
 
 
 		if(node->get_init() != NULL){
 			node->get_init()->accept(this);
 		}
 		llvm::Value *init = static_cast<llvm::Value *>(this->returned);
+		llvm::BranchInst::Create(headerBlock, entryBlock);                           
 
+		pushBlock(headerBlock);
 		if(node->get_cond() != NULL){
 			node->get_cond()->accept(this);
 		}
 		llvm::Value *cond = static_cast<llvm::Value *>(this->returned);
+		llvm::Constant *zero = llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true);
+		llvm::ICmpInst *comparison = new llvm::ICmpInst(*topBlock(), llvm::ICmpInst::ICMP_NE, cond, zero, "tmp");
+		llvm::BranchInst::Create(bodyBlock, afterLoopBlock, comparison, headerBlock);
 
+		pushBlock(bodyBlock);
 		if(node->get_exec() != NULL){
 			for(auto nx:*node->get_exec()){
 				nx->accept(this);
@@ -522,183 +500,124 @@ public:
 			node->get_increment()->accept(this);
 		}
 		llvm::Value *inc = static_cast<llvm::Value *>(this->returned);
+		llvm::BranchInst::Create(headerBlock, bodyBlock);                           
+		popBlock();
+		auto locals = getLocals();
+		pushBlock(afterLoopBlock);
+		setLocals(locals);
 
-		llvm::BranchInst::Create(bodyBlock, afterLoopBlock, cond, headerBlock);
-		llvm::BranchInst::Create(headerBlock, entryBlock);                           
-
-		
 		
 	}
 	void visit(While* node){
 		
-		this->inLoop = 1;
-		while(1){
-			if(node->get_cond() != NULL){
-				node->get_cond()->accept(this);
-			}
-			data cond = *this->exp;
-			if(cond.ival == NULL){
-				error("Condition doesn't evaluate to bool");
-			}
-			if(!*cond.ival) break;
+		llvm::BasicBlock *entryBlock = topBlock(); 
+		llvm::BasicBlock *bodyBlock = llvm::BasicBlock::Create(context, "loop_body", entryBlock->getParent(), 0);
+		llvm::BasicBlock *afterLoopBlock = llvm::BasicBlock::Create(context, "after_loop", entryBlock->getParent(), 0);
+		llvm::BasicBlock *headerBlock = llvm::BasicBlock::Create(context, "loop_header", entryBlock->getParent(), 0);
+		
+		pushBlock(headerBlock);
+		if(node->get_cond() != NULL){
+			node->get_cond()->accept(this);
+		}
+		llvm::Value *cond = static_cast<llvm::Value *>(this->returned);
+		llvm::BranchInst::Create(bodyBlock, afterLoopBlock, cond, headerBlock);
 
-			if(node->get_exec() != NULL){
-				for(auto nx:*node->get_exec()){
-					nx->accept(this);
-					if(this->br || this->cont){
-						this->cont = 0;
-						break;
-					}
-				}
+		pushBlock(bodyBlock);
+		if(node->get_exec() != NULL){
+			for(auto nx:*node->get_exec()){
+				nx->accept(this);
 			}
-			if(this->br){
-				this->br = 0;
-				break;
-			}
-		}	
-		this->inLoop = 0;
+		}
+		llvm::BranchInst::Create(headerBlock, bodyBlock);                           
+		popBlock();
+		auto locals = getLocals();
+		pushBlock(afterLoopBlock);
+		setLocals(locals);
+
 	}
 	void visit(ArrayAssign* node){
 	
-		if(this->symbol_table.top().count(node->get_name()) == 0){
-			error(node->get_name()+" not declared");
-		}
-		data cur = this->symbol_table.top()[node->get_name()];
-		int prod = 1;
-		for(int i:*(cur.dims)) prod*=i;
-		int index = 0;
-		int i = 0;
-		if(node->get_dims() != NULL){
-			for(auto nx:*node->get_dims()){
-				if(i > (*(cur.dims)).size()){
-					error("Too many dimensions");
-				}
-				nx->accept(this);
-				if(this->exp->ival == NULL){
-					error("Array Index must be integer");
-				}
-				if(*(this->exp->ival) >= (*(cur.dims))[i]){
-					error("Out of bound array access");
-				}
-				prod /= (*(cur.dims))[i];
-				index += *(this->exp->ival)*(prod);
-				i++;
-			}
-		}
-		if(node->get_right() != NULL){
-			node->get_right()->accept(this);
-		}
-		if(cur.iar != NULL && this->exp->ival != NULL){
-			(*(this->symbol_table.top()[node->get_name()].iar))[index] = *(this->exp->ival);
-		}
-		else if(cur.far != NULL && this->exp->fval != NULL){
-			(*(this->symbol_table.top()[node->get_name()].far))[index] = *(this->exp->fval);
-		}
-		else if(cur.bar != NULL && this->exp->bval != NULL){
-			(*(this->symbol_table.top()[node->get_name()].bar))[index] = *(this->exp->bval);
-		}
-		else if(cur.sval != NULL && this->exp->cval != NULL){
-			(*(this->symbol_table.top()[node->get_name()].sval))[index] = *(this->exp->cval);
-		}	
-		else{
-			error("Invalid Array Assignment");
-		}
-		
+		// if(this->symbol_table.top().count(node->get_name()) == 0){
+		// 	error(node->get_name()+" not declared");
+		// }
+		// data cur = this->symbol_table.top()[node->get_name()];
+		// int prod = 1;
+		// for(int i:*(cur.dims)) prod*=i;
+		// int index = 0;
+		// int i = 0;
+		// if(node->get_dims() != NULL){
+		// 	for(auto nx:*node->get_dims()){
+		// 		if(i > (*(cur.dims)).size()){
+		// 			error("Too many dimensions");
+		// 		}
+		// 		nx->accept(this);
+		// 		if(this->exp->ival == NULL){
+		// 			error("Array Index must be integer");
+		// 		}
+		// 		if(*(this->exp->ival) >= (*(cur.dims))[i]){
+		// 			error("Out of bound array access");
+		// 		}
+		// 		prod /= (*(cur.dims))[i];
+		// 		index += *(this->exp->ival)*(prod);
+		// 		i++;
+		// 	}
+		// }
+		// if(node->get_right() != NULL){
+		// 	node->get_right()->accept(this);
+		// }
+		// if(cur.iar != NULL && this->exp->ival != NULL){
+		// 	(*(this->symbol_table.top()[node->get_name()].iar))[index] = *(this->exp->ival);
+		// }
+		// else if(cur.far != NULL && this->exp->fval != NULL){
+		// 	(*(this->symbol_table.top()[node->get_name()].far))[index] = *(this->exp->fval);
+		// }
+		// else if(cur.bar != NULL && this->exp->bval != NULL){
+		// 	(*(this->symbol_table.top()[node->get_name()].bar))[index] = *(this->exp->bval);
+		// }
+		// else if(cur.sval != NULL && this->exp->cval != NULL){
+		// 	(*(this->symbol_table.top()[node->get_name()].sval))[index] = *(this->exp->cval);
+		// }	
+		// else{
+		// 	error("Invalid Array Assignment");
+		// }
+		// TODO ARRAY ASSIGNMENT
 	}
 	void visit(Assign* node){
 		
-		if(this->symbol_table.top().count(node->get_name()) == 0){
-			error(node->get_name()+" not declared");
+		std::string name = node->get_name();
+		if(!isGlobal(name)){
+			error(name+" not declared");
 		}
-		data cur = this->symbol_table.top()[node->get_name()];
+		llvm::Value *location = getBlock(name);
 		std::string op = node->get_op();
 		if(node->get_right() != NULL){
 			node->get_right()->accept(this);
 		}
-		
-		if (op ==  "="){
-			if(cur.ival != NULL && this->exp->ival != NULL){
-				*(this->symbol_table.top()[node->get_name()].ival) = *(this->exp->ival);
-			}
-			else if(cur.fval != NULL && this->exp->fval != NULL){
-				*(this->symbol_table.top()[node->get_name()].fval) = *(this->exp->fval);
-			}
-			else if(cur.bval != NULL && this->exp->bval != NULL){
-				*(this->symbol_table.top()[node->get_name()].bval) = *(this->exp->bval);
-			}
-			else if(cur.cval != NULL && this->exp->cval != NULL){
-				*(this->symbol_table.top()[node->get_name()].cval) = *(this->exp->cval);
-			}
-			else{
-				error("Invalid Assignment");
-			}
-		}
+		llvm::Value *expr = static_cast<llvm::Value *>(this->returned);
 		if (op ==  "+="){
-			if(cur.ival != NULL && this->exp->ival != NULL){
-				*(this->symbol_table.top()[node->get_name()].ival) += *(this->exp->ival);
-			}
-			else if(cur.fval != NULL && this->exp->fval != NULL){
-				*(this->symbol_table.top()[node->get_name()].fval) += *(this->exp->fval);
-			}
-			else{
-				error("Invalid Assignment");
-			}
+			expr = llvm::BinaryOperator::Create(llvm::Instruction::Add, new llvm::LoadInst(location, "load", topBlock()), expr, "tmp", topBlock());
 		}
 		if (op ==  "-="){
-			if(cur.ival != NULL && this->exp->ival != NULL){
-				*(this->symbol_table.top()[node->get_name()].ival) -= *(this->exp->ival);
-			}
-			else if(cur.fval != NULL && this->exp->fval != NULL){
-				*(this->symbol_table.top()[node->get_name()].fval) -= *(this->exp->fval);
-			}
-			else{
-				error("Invalid Assignment");
-			}
+			expr = llvm::BinaryOperator::Create(llvm::Instruction::Sub, new llvm::LoadInst(location, "load", topBlock()), expr, "tmp", topBlock());
+			
 		}
 		if (op ==  "*="){
-			if(cur.ival != NULL && this->exp->ival != NULL){
-				*(this->symbol_table.top()[node->get_name()].ival) *= *(this->exp->ival);
-			}
-			else if(cur.fval != NULL && this->exp->fval != NULL){
-				*(this->symbol_table.top()[node->get_name()].fval) *= *(this->exp->fval);
-			}
-			else{
-				error("Invalid Assignment");
-			}
+			expr = llvm::BinaryOperator::Create(llvm::Instruction::Mul, new llvm::LoadInst(location, "load", topBlock()), expr, "tmp", topBlock());
+			
 		}
 		if (op ==  "/="){
-			if(cur.ival != NULL && this->exp->ival != NULL){
-				*(this->symbol_table.top()[node->get_name()].ival) /= *(this->exp->ival);
-			}
-			else if(cur.fval != NULL && this->exp->fval != NULL){
-				*(this->symbol_table.top()[node->get_name()].fval) /= *(this->exp->fval);
-			}
-			else{
-				error("Invalid Assignment");
-			}
+			expr = llvm::BinaryOperator::Create(llvm::Instruction::SDiv, new llvm::LoadInst(location, "load", topBlock()), expr, "tmp", topBlock());
 		}
-		if (op ==  "%="){
-			if(cur.ival != NULL && this->exp->ival != NULL){
-				*(this->symbol_table.top()[node->get_name()].ival) %= *(this->exp->ival);
-			}
-			else{
-				error("Invalid Assignment");
-			}
-		}
+		this->returned = new llvm::StoreInst(expr, location, false, topBlock());
+
 	}
 	void visit(Break* node){
 		
-		if(!this->inLoop){
-			error("break used outside loop");
-		}
-		this->br = 1;
+		error("Not Implemented yet");
 	}
 	void visit(Continue* node){
 		
-		if(!this->inLoop){
-			error("continue used outside loop");
-		}
-		this->cont = 1;
+		error("Not Implemented yet");
 	}
 	void visit(Return* node){
 		
@@ -706,29 +625,30 @@ public:
 		llvm::Function *function = top->getParent();
 		if(function->getReturnType()->isVoidTy() == true){
 			if(node->get_ret() != NULL){	
-				error("Attempting to return non void in void function");
+				error("Attempting to this->returned = non void in void function");
 			}
 			else{
-				this->returned = llvm::ReturnInst::Create(llvm::getGlobalContext(),topBlock());
+				this->returned = llvm::ReturnInst::Create(context,topBlock());
 			}
 		} 
 		else{
 			if(node->get_ret() != NULL){	
-				Value *ret = static_cast<llvm::Value *>(node->get_ret->accept(this));
-				this->returned = llvm::ReturnInst::Create(llvm::getGlobalContext(), ret, topBlock());
+				node->get_ret()->accept(this);
+				llvm::Value *ret = static_cast<llvm::Value *>(this->returned);
+				this->returned = llvm::ReturnInst::Create(context, ret, topBlock());
 			}
 			else{
-				error("No return for function with return type");
+				error("No this->returned = for function with this->returned = type");
 			}
 		}
 	}
 	void visit(Param* node){
 		
-		std::cout<<node->get_type();
+		// std::cout<<node->get_type();
 		if(node->get_multidim() != NULL){
 			traverse(node->get_multidim());
 		}
-		std::cout<<" "<<node->get_name();
+		// std::cout<<" "<<node->get_name();
 	}
 			
 	void visit(ParenExp* node){
@@ -737,15 +657,12 @@ public:
 			node->get_exp()->accept(this);
 		}		
 	}
-	~InterpretVisitor(){
-		for(int i=0;i<alloced.size();i++){
-			alloced[i].destroy();
-		}
-	}
+	~CodegenVisitor(){}
 
 private:
 	llvm::Module* module;
-	ASTProgram* start;
+	llvm::IRBuilder<> *builder;
+	StartNode* start;
 	llvm::Function* mainFunc;                   
 	std::vector<DataBlock> table; 
 
@@ -755,10 +672,10 @@ private:
 		std::cerr<<msg<<"\n";
 		exit(0);
 	}
-	std::unordered_map<std::string, llvm::Value *> getLocals(){
+	std::map<std::string, llvm::Value *> getLocals(){
 		return table.back().locals;
 	}
-	void setLocals(std::unordered_map<std::string, llvm::Value *> variables){
+	void setLocals(std::map<std::string, llvm::Value *> variables){
 		table.back().locals.insert(variables.begin(), variables.end());
 	}
 	bool isLocal(std::string name){
@@ -767,7 +684,8 @@ private:
 	void declareLocals(std::string name, llvm::Value *value){
 		if(!isLocal(name)){
 			std::pair<std::string, llvm::Value *> inp = std::pair<std::string, llvm::Value *>(name, value);
-			blockTable.front().localVariables.insert(inp);
+			// std::cout<<"Decalring "<<name<<std::endl;
+			table.back().locals.insert(inp);
 		}
 		else{
 			error("Redeclaration of "+name);
@@ -775,28 +693,21 @@ private:
 	}
 	bool isGlobal(std::string name){
 		for(auto it:table){
-			if(it.count(name)){
+			if(it.locals.count(name)){
 				return true;
 			}
 		}
 		return false;
 	}
 	llvm::Value *getBlock(std::string name){
-		std::list<BlockVariables>::iterator it;
-		for(auto *it:table){
-			if(it->count(name)){
-				return it;
+		std::vector<DataBlock>::iterator it;
+		for(it = table.begin(); it != table.end(); it++){
+			if(it->locals.count(name)){
+				llvm::Value *ret = it->locals.find(name)->second;
+				return  ret;
 			}
 		}
-		return NULL;
-	}
-	llvm:: isGlobal(std::string name){
-		for(auto it:table){
-			if(it.count(name)){
-				return true;
-			}
-		}
-		return false;
+		return  NULL;
 	}
 	
 	void pushBlock(llvm::BasicBlock *block){
@@ -808,13 +719,13 @@ private:
 	llvm::BasicBlock *topBlock(){
 		for(int i= table.size();i>=0;i--){
 			if(table[i].block != NULL){  
-				return table[i].block;
+				return  table[i].block;
 			}
 		}
-		return blockTable.back().block;
+		return table.back().block;
 	}
 	llvm::BasicBlock *botBlock(){
-		return blockTable.front().block;
+		return table.front().block;
 	}          
 	void handleBlock(llvm::BasicBlock *block){
 		block = topBlock();
@@ -822,19 +733,36 @@ private:
 	}
 	void buildPass(llvm::BasicBlock *block){
 		llvm::legacy::PassManager PM;   
-		llvm::ReturnInst::Create(llvm::getGlobalContext(), block);
+		llvm::ReturnInst::Create(context, block);
 		llvm::verifyModule(*this->module);
 		PM.add(llvm::createPrintModulePass(llvm::outs()));
 		PM.run(*this->module);
 	}
-	void codeGen() {
-		llvm::BasicBlock *block = llvm::BasicBlock::Create(llvm::getGlobalContext(), "entry", this->mainFunc, 0);  
-		pushBlock(block);
-		this->visit(start);
-		handleBlock(block);
-		buildPass(block);
+	
+	template <class T>
+	void traverse(std::vector<T> *a){
+		for(auto nx:*a){
+			nx->accept(this);
+		}
 	}
+	llvm::Function *printf_f;
+	static llvm::Function*
+	printf_prototype(llvm::LLVMContext& ctx, llvm::Module *mod){
+	    std::vector<llvm::Type*> printf_arg_types;
+	    printf_arg_types.push_back(llvm::Type::getInt8PtrTy(ctx));
 
+	    llvm::FunctionType* printf_type =
+	        llvm::FunctionType::get(
+	            llvm::Type::getInt32Ty(ctx), printf_arg_types, true);
+
+	    llvm::Function *func = llvm::Function::Create(
+	                printf_type, llvm::Function::ExternalLinkage,
+	                llvm::Twine("printf"),
+	                mod
+	           );
+	    func->setCallingConv(llvm::CallingConv::C);
+	    return func;
+	}
 };
 
 #endif

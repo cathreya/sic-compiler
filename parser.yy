@@ -136,12 +136,12 @@
 start : imports program { 
 	$$ = new StartNode($1,$2);
 	root = $$;
-	std::cout << "Parse successful!" << std::endl; 
+	std::cerr << "Parse successful!" << std::endl; 
 }
 | program { 
 	$$ = new StartNode(NULL,$1);
 	root = $$;
-	std::cout << "Parse successful!" << std::endl;
+	std::cerr << "Parse successful!" << std::endl;
 }
 
 imports : IMPORT string STMT_SEP {$$ = new std::vector<Imports*> ({new Imports($2)});}

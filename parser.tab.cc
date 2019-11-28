@@ -1449,7 +1449,7 @@ yyreduce:
     { 
 	(yyval.StartNodeVal) = new StartNode((yyvsp[-1].ImportsVal),(yyvsp[0].ProgramNodeVal));
 	root = (yyval.StartNodeVal);
-	std::cout << "Parse successful!" << std::endl; 
+	std::cerr << "Parse successful!" << std::endl; 
 }
 #line 1455 "parser.tab.cc" /* yacc.c:1646  */
     break;
@@ -1459,7 +1459,7 @@ yyreduce:
     { 
 	(yyval.StartNodeVal) = new StartNode(NULL,(yyvsp[0].ProgramNodeVal));
 	root = (yyval.StartNodeVal);
-	std::cout << "Parse successful!" << std::endl;
+	std::cerr << "Parse successful!" << std::endl;
 }
 #line 1465 "parser.tab.cc" /* yacc.c:1646  */
     break;

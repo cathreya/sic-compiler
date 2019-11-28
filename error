@@ -1,0 +1,132 @@
+clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated [-Wdeprecated]
+warning: unknown warning option '-Wno-maybe-uninitialized'; did you mean '-Wno-uninitialized'? [-Wunknown-warning-option]
+lex.yy.c:624:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register yy_state_type yy_current_state;
+        ^~~~~~~~~
+lex.yy.c:625:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register char *yy_cp, *yy_bp;
+        ^~~~~~~~~
+lex.yy.c:625:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register char *yy_cp, *yy_bp;
+        ^~~~~~~~~
+lex.yy.c:626:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register int yy_act;
+        ^~~~~~~~~
+lex.yy.c:672:4: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+                        register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+                        ^~~~~~~~~
+lex.yy.c:1216:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register char *dest = yy_current_buffer->yy_ch_buf;
+        ^~~~~~~~~
+lex.yy.c:1217:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register char *source = yytext_ptr;
+        ^~~~~~~~~
+lex.yy.c:1218:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register int number_to_move, i;
+        ^~~~~~~~~
+lex.yy.c:1218:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register int number_to_move, i;
+        ^~~~~~~~~
+lex.yy.c:1348:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register yy_state_type yy_current_state;
+        ^~~~~~~~~
+lex.yy.c:1349:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register char *yy_cp;
+        ^~~~~~~~~
+lex.yy.c:1355:3: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+                register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+                ^~~~~~~~~
+lex.yy.c:1387:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register int yy_is_jam;
+        ^~~~~~~~~
+lex.yy.c:1388:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register char *yy_cp = yy_c_buf_p;
+        ^~~~~~~~~
+lex.yy.c:1390:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register YY_CHAR yy_c = 1;
+        ^~~~~~~~~
+lex.yy.c:1411:29: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+static void yyunput( int c, register char *yy_bp )
+                            ^~~~~~~~~
+lex.yy.c:1418:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+        register char *yy_cp = yy_c_buf_p;
+        ^~~~~~~~~
+lex.yy.c:1426:3: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+                register int number_to_move = yy_n_chars + 2;
+                ^~~~~~~~~
+lex.yy.c:1427:3: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+                register char *dest = &yy_current_buffer->yy_ch_buf[
+                ^~~~~~~~~
+lex.yy.c:1429:3: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
+                register char *source =
+                ^~~~~~~~~
+lex.yy.c:1411:13: warning: unused function 'yyunput' [-Wunused-function]
+static void yyunput( int c, register char *yy_bp )
+            ^
+lex.yy.c:1455:12: warning: function 'yyinput' is not needed and will not be emitted [-Wunneeded-internal-declaration]
+static int yyinput()
+           ^
+23 warnings generated.
+warning: unknown warning option '-Wno-maybe-uninitialized'; did you mean '-Wno-uninitialized'? [-Wunknown-warning-option]
+1 warning generated.
+warning: unknown warning option '-Wno-maybe-uninitialized'; did you mean '-Wno-uninitialized'? [-Wunknown-warning-option]
+In file included from codegenVisitor.cpp:5:
+./codegenVisitor.hh:112:10: warning: unused variable 'tmp' [-Wunused-variable]
+                                auto tmp = new llvm::StoreInst(arg, allocaInst, false, topBlock());
+                                     ^
+./codegenVisitor.hh:157:11: warning: unused variable 'tmp' [-Wunused-variable]
+                                        auto tmp = new llvm::StoreInst(val, allocaInst, false, topBlock());
+                                             ^
+./codegenVisitor.hh:160:11: warning: unused variable 'tmp' [-Wunused-variable]
+                                        auto tmp = new llvm::StoreInst(llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true), allocaInst, false, topBlock());
+                                             ^
+./codegenVisitor.hh:339:16: warning: unused variable 'left' [-Wunused-variable]
+                llvm::Value* left = static_cast<llvm::Value *>(this->returned);
+                             ^
+./codegenVisitor.hh:343:16: warning: unused variable 'middle' [-Wunused-variable]
+                llvm::Value* middle = static_cast<llvm::Value *>(this->returned);
+                             ^
+./codegenVisitor.hh:347:16: warning: unused variable 'right' [-Wunused-variable]
+                llvm::Value* right = static_cast<llvm::Value *>(this->returned);
+                             ^
+./codegenVisitor.hh:383:109: error: use of undeclared identifier 'ctx'
+                llvm::GlobalVariable *var = new llvm::GlobalVariable(*module, llvm::ArrayType::get(llvm::IntegerType::get(ctx, 8), 4),
+                                                                                                                          ^
+./codegenVisitor.hh:392:43: error: use of undeclared identifier 'print_f'
+                this->returned = llvm::CallInst::Create(print_f, var_ref, tmp, "printf", topBlock());   
+                                                        ^
+./codegenVisitor.hh:399:16: warning: comparison of integers of different signs: 'int' and 'std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::size_type' (aka 'unsigned long') [-Wsign-compare]
+                for(int i=0;i<lit.size();i++){
+                            ~^~~~~~~~~~~
+./codegenVisitor.hh:489:16: warning: unused variable 'inc' [-Wunused-variable]
+                llvm::Value *inc = static_cast<llvm::Value *>(this->returned);
+                             ^
+./codegenVisitor.hh:471:16: warning: unused variable 'init' [-Wunused-variable]
+                llvm::Value *init = static_cast<llvm::Value *>(this->returned);
+                             ^
+./codegenVisitor.hh:739:4: error: no template named 'TypeBuilder'
+                        TypeBuilder<int(char *, ...), false>::get(context);
+                        ^
+./codegenVisitor.hh:741:31: error: unknown type name 'Function'; did you mean 'llvm::Function'?
+                llvm::Function *func = cast<Function>(mod->getOrInsertFunction(
+                                            ^~~~~~~~
+                                            llvm::Function
+/usr/lib/llvm-6.0/include/llvm/IR/IRPrintingPasses.h:27:7: note: 'llvm::Function' declared here
+class Function;
+      ^
+In file included from codegenVisitor.cpp:5:
+./codegenVisitor.hh:743:4: error: use of undeclared identifier 'AttributeSet'; did you mean 'llvm::AttributeSet'?
+                        AttributeSet().addAttribute(mod->getContext(), 1U, Attribute::NoAlias)));
+                        ^
+/usr/lib/llvm-6.0/include/llvm/IR/Attributes.h:205:7: note: 'llvm::AttributeSet' declared here
+class AttributeSet {
+      ^
+In file included from codegenVisitor.cpp:5:
+./codegenVisitor.hh:743:55: error: use of undeclared identifier 'Attribute'; did you mean 'llvm::Attribute'?
+                        AttributeSet().addAttribute(mod->getContext(), 1U, Attribute::NoAlias)));
+                                                                           ^~~~~~~~~
+                                                                           llvm::Attribute
+/usr/lib/llvm-6.0/include/llvm/IR/Attributes.h:51:7: note: 'llvm::Attribute' declared here
+class Attribute {
+      ^
+10 warnings and 6 errors generated.
