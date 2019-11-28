@@ -753,9 +753,10 @@ private:
 	void buildPass(llvm::BasicBlock *block){
 		llvm::legacy::PassManager PM;   
 		// llvm::ReturnInst::Create(context, block);
-		if(!llvm::verifyModule(*this->module)){
-			error("Verify failed");
-		}
+		llvm::verifyModule(*this->module);
+		// if(!llvm::verifyModule(*this->module)){
+		// 	error("Verify failed");
+		// }
 		PM.add(llvm::createPrintModulePass(llvm::outs()));
 		std::cerr<<"Ok till here"<<std::endl;
 		PM.run(*this->module);

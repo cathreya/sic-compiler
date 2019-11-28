@@ -1,22 +1,22 @@
-void insertionSort(int[1000] arr, int n){
-    int i; int key; int j;  
-    
+int pow(int base, int expo){
+    int prod; prod = 1;
+    for(int i=0;i<expo;i+=1){
+        prod = prod*base;
+    }
+    return prod;
+}
+
+int g(int n, int k){
+    int sum; sum = 0;
+    for(int i=0;i<n;i+=1){
+        sum += pow(i,k);
+    }
+    return sum;
 }
 
 int main(){
-    int n = 5;
-    int[100] a;
-    a[0] = 5;
-    a[1] = 4;
-    a[2] = 3;
-    a[3] = 2;
-    a[4] = 1;
-    insertionSort(a,n);
+    int N=5; int k=2;
+    int ans = g(N,k);
 
-    for(int i=0;i<n;i+=1){
-        print(a[i]);   
-        print(' ');
-    }
-
-    print('\n');
+    print(ans);
 }
