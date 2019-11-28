@@ -1,5 +1,3 @@
-char[1000] author = "Athreya C, 2018121002";
-
 int pow(int base, int expo){
     int prod; prod = 1;
     for(int i=0;i<expo;i+=1){
@@ -17,9 +15,7 @@ int g(int n, int k){
 }
 
 int main(){
-    int N; int k;
-    read(N);
-    read(k);
+    int N=5; int k=2;
     int ans = g(N,k);
 
     print(ans);

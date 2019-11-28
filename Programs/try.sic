@@ -1,3 +1,4 @@
+
 int pow(int base, int expo){
     int prod; prod = 1;
     for(int i=0;i<expo;i+=1){
@@ -6,17 +7,18 @@ int pow(int base, int expo){
     return prod;
 }
 
-int g(int n, int k){
-    int sum; sum = 0;
-    for(int i=0;i<n;i+=1){
-        sum += pow(i,k);
-    }
-    return sum;
-}
-
 int main(){
-    int N=5; int k=2;
-    int ans = g(N,k);
+    int n=5;
 
-    print(ans);
+    for(int i=0;i<pow(2,n);i+=1){
+        for(int j=0;j<n;j+=1){
+            int k; k = i/pow(2,j);
+            if(k%2==1){
+                print(j);
+                print(' ');
+            }
+        }
+        print('\n');
+    }   
+    return 0;
 }

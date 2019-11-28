@@ -1,8 +1,7 @@
-char[1000] author = "Saujas Vaduguru, 20171098";
 
 int main(){
-    int n; 
-    read(n);
+    int n=24; 
+
     if(n==1){
         print("no\n");
         return 0;
@@ -15,9 +14,9 @@ int main(){
         }
     }
     if (prime) {
-        print("yes\n");
+        print('y');
     }
     else {
-        print("no\n");
+        print('n');
     }
 }
