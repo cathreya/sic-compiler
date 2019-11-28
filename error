@@ -1,132 +1,117 @@
-clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated [-Wdeprecated]
-warning: unknown warning option '-Wno-maybe-uninitialized'; did you mean '-Wno-uninitialized'? [-Wunknown-warning-option]
-lex.yy.c:624:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register yy_state_type yy_current_state;
-        ^~~~~~~~~
-lex.yy.c:625:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register char *yy_cp, *yy_bp;
-        ^~~~~~~~~
-lex.yy.c:625:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register char *yy_cp, *yy_bp;
-        ^~~~~~~~~
-lex.yy.c:626:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register int yy_act;
-        ^~~~~~~~~
-lex.yy.c:672:4: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-                        register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
-                        ^~~~~~~~~
-lex.yy.c:1216:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register char *dest = yy_current_buffer->yy_ch_buf;
-        ^~~~~~~~~
-lex.yy.c:1217:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register char *source = yytext_ptr;
-        ^~~~~~~~~
-lex.yy.c:1218:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register int number_to_move, i;
-        ^~~~~~~~~
-lex.yy.c:1218:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register int number_to_move, i;
-        ^~~~~~~~~
-lex.yy.c:1348:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register yy_state_type yy_current_state;
-        ^~~~~~~~~
-lex.yy.c:1349:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register char *yy_cp;
-        ^~~~~~~~~
-lex.yy.c:1355:3: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-                register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
-                ^~~~~~~~~
-lex.yy.c:1387:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register int yy_is_jam;
-        ^~~~~~~~~
-lex.yy.c:1388:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register char *yy_cp = yy_c_buf_p;
-        ^~~~~~~~~
-lex.yy.c:1390:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register YY_CHAR yy_c = 1;
-        ^~~~~~~~~
-lex.yy.c:1411:29: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-static void yyunput( int c, register char *yy_bp )
-                            ^~~~~~~~~
-lex.yy.c:1418:2: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-        register char *yy_cp = yy_c_buf_p;
-        ^~~~~~~~~
-lex.yy.c:1426:3: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-                register int number_to_move = yy_n_chars + 2;
-                ^~~~~~~~~
-lex.yy.c:1427:3: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-                register char *dest = &yy_current_buffer->yy_ch_buf[
-                ^~~~~~~~~
-lex.yy.c:1429:3: warning: 'register' storage class specifier is deprecated and incompatible with C++17 [-Wdeprecated-register]
-                register char *source =
-                ^~~~~~~~~
-lex.yy.c:1411:13: warning: unused function 'yyunput' [-Wunused-function]
-static void yyunput( int c, register char *yy_bp )
-            ^
-lex.yy.c:1455:12: warning: function 'yyinput' is not needed and will not be emitted [-Wunneeded-internal-declaration]
-static int yyinput()
-           ^
-23 warnings generated.
-warning: unknown warning option '-Wno-maybe-uninitialized'; did you mean '-Wno-uninitialized'? [-Wunknown-warning-option]
-1 warning generated.
-warning: unknown warning option '-Wno-maybe-uninitialized'; did you mean '-Wno-uninitialized'? [-Wunknown-warning-option]
-In file included from codegenVisitor.cpp:5:
-./codegenVisitor.hh:112:10: warning: unused variable 'tmp' [-Wunused-variable]
-                                auto tmp = new llvm::StoreInst(arg, allocaInst, false, topBlock());
-                                     ^
-./codegenVisitor.hh:157:11: warning: unused variable 'tmp' [-Wunused-variable]
-                                        auto tmp = new llvm::StoreInst(val, allocaInst, false, topBlock());
-                                             ^
-./codegenVisitor.hh:160:11: warning: unused variable 'tmp' [-Wunused-variable]
-                                        auto tmp = new llvm::StoreInst(llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true), allocaInst, false, topBlock());
-                                             ^
-./codegenVisitor.hh:339:16: warning: unused variable 'left' [-Wunused-variable]
-                llvm::Value* left = static_cast<llvm::Value *>(this->returned);
-                             ^
-./codegenVisitor.hh:343:16: warning: unused variable 'middle' [-Wunused-variable]
-                llvm::Value* middle = static_cast<llvm::Value *>(this->returned);
-                             ^
-./codegenVisitor.hh:347:16: warning: unused variable 'right' [-Wunused-variable]
-                llvm::Value* right = static_cast<llvm::Value *>(this->returned);
-                             ^
-./codegenVisitor.hh:383:109: error: use of undeclared identifier 'ctx'
-                llvm::GlobalVariable *var = new llvm::GlobalVariable(*module, llvm::ArrayType::get(llvm::IntegerType::get(ctx, 8), 4),
-                                                                                                                          ^
-./codegenVisitor.hh:392:43: error: use of undeclared identifier 'print_f'
-                this->returned = llvm::CallInst::Create(print_f, var_ref, tmp, "printf", topBlock());   
-                                                        ^
-./codegenVisitor.hh:399:16: warning: comparison of integers of different signs: 'int' and 'std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::size_type' (aka 'unsigned long') [-Wsign-compare]
-                for(int i=0;i<lit.size();i++){
-                            ~^~~~~~~~~~~
-./codegenVisitor.hh:489:16: warning: unused variable 'inc' [-Wunused-variable]
-                llvm::Value *inc = static_cast<llvm::Value *>(this->returned);
-                             ^
-./codegenVisitor.hh:471:16: warning: unused variable 'init' [-Wunused-variable]
-                llvm::Value *init = static_cast<llvm::Value *>(this->returned);
-                             ^
-./codegenVisitor.hh:739:4: error: no template named 'TypeBuilder'
-                        TypeBuilder<int(char *, ...), false>::get(context);
-                        ^
-./codegenVisitor.hh:741:31: error: unknown type name 'Function'; did you mean 'llvm::Function'?
-                llvm::Function *func = cast<Function>(mod->getOrInsertFunction(
-                                            ^~~~~~~~
-                                            llvm::Function
-/usr/lib/llvm-6.0/include/llvm/IR/IRPrintingPasses.h:27:7: note: 'llvm::Function' declared here
-class Function;
-      ^
-In file included from codegenVisitor.cpp:5:
-./codegenVisitor.hh:743:4: error: use of undeclared identifier 'AttributeSet'; did you mean 'llvm::AttributeSet'?
-                        AttributeSet().addAttribute(mod->getContext(), 1U, Attribute::NoAlias)));
-                        ^
-/usr/lib/llvm-6.0/include/llvm/IR/Attributes.h:205:7: note: 'llvm::AttributeSet' declared here
-class AttributeSet {
-      ^
-In file included from codegenVisitor.cpp:5:
-./codegenVisitor.hh:743:55: error: use of undeclared identifier 'Attribute'; did you mean 'llvm::Attribute'?
-                        AttributeSet().addAttribute(mod->getContext(), 1U, Attribute::NoAlias)));
-                                                                           ^~~~~~~~~
-                                                                           llvm::Attribute
-/usr/lib/llvm-6.0/include/llvm/IR/Attributes.h:51:7: note: 'llvm::Attribute' declared here
-class Attribute {
-      ^
-10 warnings and 6 errors generated.
+*** Segmentation fault
+Register dump:
+
+ RAX: 0000000000000000   RBX: 0000000000000002   RCX: 0000000000928230
+ RDX: 000000000000000b   RSI: 0000000000000000   RDI: 0000000000000000
+ RBP: 0000000000000000   R8 : 000000000092c3d8   R9 : 0000000000000000
+ R10: 000000000000000e   R11: 00007f4840ef2b10   R12: 000000000092b460
+ R13: 0000000000000000   R14: 000000000092c550   R15: 000000000092b460
+ RSP: 00007ffd0d6d5f40
+
+ RIP: 00007f4840ef2b24   EFLAGS: 00010202
+
+ CS: 0033   FS: 0000   GS: 0000
+
+ Trap: 0000000e   Error: 00000004   OldMask: 00000000   CR2: 00000000
+
+ FPUCW: 0000037f   FPUSW: 00000000   TAG: 00000000
+ RIP: 00000000   RDP: 00000000
+
+ ST(0) 0000 0000000000000000   ST(1) 0000 0000000000000000
+ ST(2) 0000 0000000000000000   ST(3) 0000 0000000000000000
+ ST(4) 0000 0000000000000000   ST(5) 0000 0000000000000000
+ ST(6) 0000 0000000000000000   ST(7) 0000 0000000000000000
+ mxcsr: 1f80
+ XMM0:  00000000000000000000000000000000 XMM1:  00000000000000000000000000000000
+ XMM2:  00000000000000000000000000000000 XMM3:  00000000000000000000000000000000
+ XMM4:  00000000000000000000000000000000 XMM5:  00000000000000000000000000000000
+ XMM6:  00000000000000000000000000000000 XMM7:  00000000000000000000000000000000
+ XMM8:  00000000000000000000000000000000 XMM9:  00000000000000000000000000000000
+ XMM10: 00000000000000000000000000000000 XMM11: 00000000000000000000000000000000
+ XMM12: 00000000000000000000000000000000 XMM13: 00000000000000000000000000000000
+ XMM14: 00000000000000000000000000000000 XMM15: 00000000000000000000000000000000
+
+Backtrace:
+/usr/lib/x86_64-linux-gnu/libLLVM-6.0.so.1(_ZN4llvm11PointerType3getEPNS_4TypeEj+0x14)[0x7f4840ef2b24]
+./codegen[0x4115ba]
+./codegen[0x41150c]
+./codegen[0x4113b3]
+./codegen[0x40c409]
+./codegen[0x40f0dd]
+./codegen[0x40e24c]
+./codegen[0x41002b]
+./codegen[0x410c4b]
+./codegen[0x40b47f]
+./codegen[0x40b141]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xe7)[0x7f483f8b0b97]
+./codegen[0x403b8a]
+
+Memory map:
+
+00400000-00417000 r-xp 00000000 08:07 262395 /home/atrophy/Desktop/M19/Compilers/parser-cathreya/codegen
+00417000-00418000 r--p 00016000 08:07 262395 /home/atrophy/Desktop/M19/Compilers/parser-cathreya/codegen
+00418000-00419000 rw-p 00017000 08:07 262395 /home/atrophy/Desktop/M19/Compilers/parser-cathreya/codegen
+008e5000-00948000 rw-p 00000000 00:00 0 [heap]
+7f483ebe6000-7f483ec00000 r-xp 00000000 08:05 1313970 /lib/x86_64-linux-gnu/libpthread-2.27.so
+7f483ec00000-7f483edff000 ---p 0001a000 08:05 1313970 /lib/x86_64-linux-gnu/libpthread-2.27.so
+7f483edff000-7f483ee00000 r--p 00019000 08:05 1313970 /lib/x86_64-linux-gnu/libpthread-2.27.so
+7f483ee00000-7f483ee01000 rw-p 0001a000 08:05 1313970 /lib/x86_64-linux-gnu/libpthread-2.27.so
+7f483ee01000-7f483ee05000 rw-p 00000000 00:00 0
+7f483ee05000-7f483ee2a000 r-xp 00000000 08:05 1313398 /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f483ee2a000-7f483f02a000 ---p 00025000 08:05 1313398 /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f483f02a000-7f483f02e000 r--p 00025000 08:05 1313398 /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f483f02e000-7f483f02f000 rw-p 00029000 08:05 1313398 /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f483f02f000-7f483f032000 r-xp 00000000 08:05 1313860 /lib/x86_64-linux-gnu/libdl-2.27.so
+7f483f032000-7f483f231000 ---p 00003000 08:05 1313860 /lib/x86_64-linux-gnu/libdl-2.27.so
+7f483f231000-7f483f232000 r--p 00002000 08:05 1313860 /lib/x86_64-linux-gnu/libdl-2.27.so
+7f483f232000-7f483f233000 rw-p 00003000 08:05 1313860 /lib/x86_64-linux-gnu/libdl-2.27.so
+7f483f233000-7f483f24f000 r-xp 00000000 08:05 1314009 /lib/x86_64-linux-gnu/libz.so.1.2.11
+7f483f24f000-7f483f44e000 ---p 0001c000 08:05 1314009 /lib/x86_64-linux-gnu/libz.so.1.2.11
+7f483f44e000-7f483f44f000 r--p 0001b000 08:05 1314009 /lib/x86_64-linux-gnu/libz.so.1.2.11
+7f483f44f000-7f483f450000 rw-p 0001c000 08:05 1314009 /lib/x86_64-linux-gnu/libz.so.1.2.11
+7f483f450000-7f483f481000 r-xp 00000000 08:05 10791 /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56
+7f483f481000-7f483f680000 ---p 00031000 08:05 10791 /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56
+7f483f680000-7f483f682000 r--p 00030000 08:05 10791 /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56
+7f483f682000-7f483f683000 rw-p 00032000 08:05 10791 /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56
+7f483f683000-7f483f687000 rw-p 00000000 00:00 0
+7f483f687000-7f483f68e000 r-xp 00000000 08:05 10835 /usr/lib/x86_64-linux-gnu/libffi.so.6.0.4
+7f483f68e000-7f483f88d000 ---p 00007000 08:05 10835 /usr/lib/x86_64-linux-gnu/libffi.so.6.0.4
+7f483f88d000-7f483f88e000 r--p 00006000 08:05 10835 /usr/lib/x86_64-linux-gnu/libffi.so.6.0.4
+7f483f88e000-7f483f88f000 rw-p 00007000 08:05 10835 /usr/lib/x86_64-linux-gnu/libffi.so.6.0.4
+7f483f88f000-7f483fa76000 r-xp 00000000 08:05 1313837 /lib/x86_64-linux-gnu/libc-2.27.so
+7f483fa76000-7f483fc76000 ---p 001e7000 08:05 1313837 /lib/x86_64-linux-gnu/libc-2.27.so
+7f483fc76000-7f483fc7a000 r--p 001e7000 08:05 1313837 /lib/x86_64-linux-gnu/libc-2.27.so
+7f483fc7a000-7f483fc7c000 rw-p 001eb000 08:05 1313837 /lib/x86_64-linux-gnu/libc-2.27.so
+7f483fc7c000-7f483fc80000 rw-p 00000000 00:00 0
+7f483fc80000-7f483fc97000 r-xp 00000000 08:05 1309798 /lib/x86_64-linux-gnu/libgcc_s.so.1
+7f483fc97000-7f483fe96000 ---p 00017000 08:05 1309798 /lib/x86_64-linux-gnu/libgcc_s.so.1
+7f483fe96000-7f483fe97000 r--p 00016000 08:05 1309798 /lib/x86_64-linux-gnu/libgcc_s.so.1
+7f483fe97000-7f483fe98000 rw-p 00017000 08:05 1309798 /lib/x86_64-linux-gnu/libgcc_s.so.1
+7f483fe98000-7f4840035000 r-xp 00000000 08:05 1313900 /lib/x86_64-linux-gnu/libm-2.27.so
+7f4840035000-7f4840234000 ---p 0019d000 08:05 1313900 /lib/x86_64-linux-gnu/libm-2.27.so
+7f4840234000-7f4840235000 r--p 0019c000 08:05 1313900 /lib/x86_64-linux-gnu/libm-2.27.so
+7f4840235000-7f4840236000 rw-p 0019d000 08:05 1313900 /lib/x86_64-linux-gnu/libm-2.27.so
+7f4840236000-7f48403af000 r-xp 00000000 08:05 3662 /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7f48403af000-7f48405af000 ---p 00179000 08:05 3662 /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7f48405af000-7f48405b9000 r--p 00179000 08:05 3662 /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7f48405b9000-7f48405bb000 rw-p 00183000 08:05 3662 /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7f48405bb000-7f48405bf000 rw-p 00000000 00:00 0
+7f48405bf000-7f4843c81000 r-xp 00000000 08:05 10479 /usr/lib/x86_64-linux-gnu/libLLVM-6.0.so.1
+7f4843c81000-7f4843c82000 ---p 036c2000 08:05 10479 /usr/lib/x86_64-linux-gnu/libLLVM-6.0.so.1
+7f4843c82000-7f4843ff2000 r--p 036c2000 08:05 10479 /usr/lib/x86_64-linux-gnu/libLLVM-6.0.so.1
+7f4843ff2000-7f4844000000 rw-p 03a32000 08:05 10479 /usr/lib/x86_64-linux-gnu/libLLVM-6.0.so.1
+7f4844000000-7f484405b000 rw-p 00000000 00:00 0
+7f484405b000-7f484405f000 r-xp 00000000 08:05 1313813 /lib/x86_64-linux-gnu/libSegFault.so
+7f484405f000-7f484425e000 ---p 00004000 08:05 1313813 /lib/x86_64-linux-gnu/libSegFault.so
+7f484425e000-7f484425f000 r--p 00003000 08:05 1313813 /lib/x86_64-linux-gnu/libSegFault.so
+7f484425f000-7f4844260000 rw-p 00004000 08:05 1313813 /lib/x86_64-linux-gnu/libSegFault.so
+7f4844260000-7f4844287000 r-xp 00000000 08:05 1313809 /lib/x86_64-linux-gnu/ld-2.27.so
+7f484445f000-7f484446a000 rw-p 00000000 00:00 0
+7f4844485000-7f4844487000 rw-p 00000000 00:00 0
+7f4844487000-7f4844488000 r--p 00027000 08:05 1313809 /lib/x86_64-linux-gnu/ld-2.27.so
+7f4844488000-7f4844489000 rw-p 00028000 08:05 1313809 /lib/x86_64-linux-gnu/ld-2.27.so
+7f4844489000-7f484448a000 rw-p 00000000 00:00 0
+7ffd0d6b7000-7ffd0d6d8000 rw-p 00000000 00:00 0 [stack]
+7ffd0d7c0000-7ffd0d7c3000 r--p 00000000 00:00 0 [vvar]
+7ffd0d7c3000-7ffd0d7c5000 r-xp 00000000 00:00 0 [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0 [vsyscall]
