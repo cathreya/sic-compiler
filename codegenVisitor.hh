@@ -53,7 +53,15 @@ public:
 		llvm::BasicBlock *block = llvm::BasicBlock::Create(context, "entry", this->mainFunc, 0);  
 		this->printf_f = printf_prototype(context, module);
 		pushBlock(block);
+
+		std::string format = "%d";
+		builder->SetInsertPoint(topBlock());
+		this->form1 = builder->CreateGlobalStringPtr(format);
+		format = "%c";
+		this->form2 = builder->CreateGlobalStringPtr(format);
+
 		this->visit(start);
+		std::cerr<<"Finished visiting"<<std::endl;
 		handleBlock(block);
 		buildPass(block);
 	}
@@ -63,6 +71,9 @@ public:
 		this->module = new llvm::Module("main", context);
 		this->start = node;
 		this->module->setTargetTriple("x86_64-pc-linux-gnu"); 
+
+		llvm::FunctionType *ftype = llvm::FunctionType::get(llvm::Type::getInt64Ty(context), false);
+		this->mainFunc = llvm::Function::Create(ftype, llvm::GlobalValue::ExternalLinkage, "main", module);
 
 		// llvm::FunctionType *ftype = llvm::FunctionType::get(llvm::Type::getVoidTy(context), false);
 		// this->mainFunc = llvm::Function::Create(ftype, llvm::GlobalValue::ExternalLinkage, "main", module);
@@ -81,8 +92,6 @@ public:
 		llvm::Function *func;
 		std::string fn = node->get_name();
 		if(fn == "main"){
-			llvm::FunctionType *ftype = llvm::FunctionType::get(llvm::Type::getInt64Ty(context), false);
-			this->mainFunc = llvm::Function::Create(ftype, llvm::GlobalValue::ExternalLinkage, "main", module);
 			func = this->mainFunc;
 		}
 		else{
@@ -107,9 +116,10 @@ public:
 			}
 			llvm::FunctionType *ft = llvm::FunctionType::get(aT, llvm::makeArrayRef(argT), false);
 			func = llvm::Function::Create(ft, llvm::GlobalValue::InternalLinkage, fn, module);
+			llvm::BasicBlock *block = llvm::BasicBlock::Create(context, "body", func, 0);
+			pushBlock(block);
 		}
-		llvm::BasicBlock *block = llvm::BasicBlock::Create(context, "entry", func, 0);
-		pushBlock(block);
+
 
 		if(node->get_params() != NULL){
 			llvm::Function::arg_iterator it2 = func->arg_begin();
@@ -136,7 +146,9 @@ public:
 				llvm::ReturnInst::Create(context, topBlock());
 			}
 		}
-		popBlock();
+		if(fn != "main"){
+			popBlock();
+		}
 		this->returned = func;
 	}
 	void visit(VarDec* node){
@@ -169,6 +181,7 @@ public:
 					auto tmp = new llvm::StoreInst(llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true), allocaInst, false, topBlock());
 				}
 				declareLocals(node->get_name(), allocaInst);
+				std::cerr<<"Declared "<<node->get_name()<<" "<<allocaInst->getName().data()<<std::endl;
 				this->returned = allocaInst;
 			}
 			else{
@@ -227,8 +240,9 @@ public:
 			c = node->get_val()[0];
 		}
 
-		llvm::IntegerType *it = llvm::Type::getInt64Ty(context);
-		this->returned = llvm::ConstantInt::get(it, node->get_val(), true);
+		std::cerr<<"Here"<<std::endl;
+		llvm::IntegerType *it = llvm::Type::getInt8Ty(context);
+		this->returned = llvm::ConstantInt::get(it, c, true);
 	}
 	void visit(MultiDimArr* node){
 		
@@ -387,14 +401,15 @@ public:
 
 		node->get_arg()->accept(this);
 		llvm::Value * tmp = static_cast<llvm::Value*>(this->returned);
-		std::string format = "%d\n";
-		std::cerr<<"Got Till Here"<<std::endl;
-		builder->SetInsertPoint(topBlock());
-		llvm::Value *form = builder->CreateGlobalStringPtr(format);
-
-
+		
 		std::vector<llvm::Value *> args;
-		args.push_back(form);
+		if(tmp->getType()->isIntegerTy(8)){
+			args.push_back(form2);
+		}
+		else{
+			args.push_back(form1);
+		}
+
 		args.push_back(tmp);
 
         this->returned = llvm::CallInst::Create(printf_f, llvm::makeArrayRef(args), "printf", topBlock());
@@ -463,6 +478,7 @@ public:
 		llvm::BranchInst::Create(after, elseBlock);                           
 		popBlock();
 		auto locals = getLocals();
+		popBlock();
 		pushBlock(after);
 		setLocals(locals);
 		
@@ -473,7 +489,6 @@ public:
 		llvm::BasicBlock *bodyBlock = llvm::BasicBlock::Create(context, "loop_body", entryBlock->getParent(), 0);
 		llvm::BasicBlock *afterLoopBlock = llvm::BasicBlock::Create(context, "after_loop", entryBlock->getParent(), 0);
 		llvm::BasicBlock *headerBlock = llvm::BasicBlock::Create(context, "loop_header", entryBlock->getParent(), 0);
-
 
 		if(node->get_init() != NULL){
 			node->get_init()->accept(this);
@@ -489,6 +504,7 @@ public:
 		llvm::Constant *zero = llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0, true);
 		llvm::ICmpInst *comparison = new llvm::ICmpInst(*topBlock(), llvm::ICmpInst::ICMP_NE, cond, zero, "tmp");
 		llvm::BranchInst::Create(bodyBlock, afterLoopBlock, comparison, headerBlock);
+		popBlock();
 
 		pushBlock(bodyBlock);
 		if(node->get_exec() != NULL){
@@ -500,13 +516,13 @@ public:
 			node->get_increment()->accept(this);
 		}
 		llvm::Value *inc = static_cast<llvm::Value *>(this->returned);
-		llvm::BranchInst::Create(headerBlock, bodyBlock);                           
+		llvm::BranchInst::Create(headerBlock, topBlock());                           
 		popBlock();
 		auto locals = getLocals();
+		popBlock();
 		pushBlock(afterLoopBlock);
 		setLocals(locals);
-
-		
+		std::cerr<<"AT end Top Block "<<topBlock()->getName().data()<<std::endl;
 	}
 	void visit(While* node){
 		
@@ -665,7 +681,7 @@ private:
 	StartNode* start;
 	llvm::Function* mainFunc;                   
 	std::vector<DataBlock> table; 
-
+	llvm::Value *form1, *form2;
 	void *returned;
 
 	void error(std::string msg){
@@ -683,8 +699,8 @@ private:
 	}
 	void declareLocals(std::string name, llvm::Value *value){
 		if(!isLocal(name)){
-			std::pair<std::string, llvm::Value *> inp = std::pair<std::string, llvm::Value *>(name, value);
-			// std::cout<<"Decalring "<<name<<std::endl;
+			std::pair<std::string, llvm::Value *> inp = make_pair(name, value);
+			std::cerr<<"Declaring with "<<name<<" "<<value->getName().data()<<std::endl;
 			table.back().locals.insert(inp);
 		}
 		else{
@@ -704,6 +720,8 @@ private:
 		for(it = table.begin(); it != table.end(); it++){
 			if(it->locals.count(name)){
 				llvm::Value *ret = it->locals.find(name)->second;
+				// std::cerr<<"Found "<<it->locals.find(name)->first<<std::endl;
+				std::cerr<<"Associated with "<<name<<" "<<ret->getName().data()<<std::endl;
 				return  ret;
 			}
 		}
@@ -711,16 +729,21 @@ private:
 	}
 	
 	void pushBlock(llvm::BasicBlock *block){
+		std::cerr<<"Pushing Top "<<block->getName().data()<<std::endl;
 		table.push_back(DataBlock(block));
 	}
 	void popBlock(){
+		std::cerr<<"Popping Top "<<topBlock()->getName().data()<<std::endl;
 		table.pop_back();
 	}
 	llvm::BasicBlock *topBlock(){
-		for(int i= table.size();i>=0;i--){
-			if(table[i].block != NULL){  
-				return  table[i].block;
-			}
+		// for(int i= table.size();i>=0;i--){
+		// 	if(table[i].block != NULL){  
+		// 		return  table[i].block;
+		// 	}
+		// }
+		if(table.size() == 0){
+			std::cerr<<"Empty table"<<std::endl;
 		}
 		return table.back().block;
 	}
@@ -733,7 +756,7 @@ private:
 	}
 	void buildPass(llvm::BasicBlock *block){
 		llvm::legacy::PassManager PM;   
-		llvm::ReturnInst::Create(context, block);
+		// llvm::ReturnInst::Create(context, block);
 		llvm::verifyModule(*this->module);
 		PM.add(llvm::createPrintModulePass(llvm::outs()));
 		PM.run(*this->module);
