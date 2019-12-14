@@ -1,4 +1,4 @@
-#sic-compiler
+# sic-compiler
 
 *sic*, short for simplified C, is a language designed for the course project of Compilers taken during Monsoon 2019. Its context free grammar can be found in the manual. 
 
